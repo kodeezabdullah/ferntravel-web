@@ -1,79 +1,86 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import { SplitText } from 'gsap/SplitText';
 import Navbar from './Navbar';
 import SearchFilterBar from './SearchFilterBar';
 
-gsap.registerPlugin(SplitText);
+const SCRIPT_TEXT = 'Explore the Beauty of';
 
 export default function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
   const scriptLineRef = useRef<HTMLParagraphElement>(null);
   const boldLineRef = useRef<HTMLParagraphElement>(null);
   const scrollHintRef = useRef<HTMLParagraphElement>(null);
+  const cursorRef = useRef<HTMLSpanElement>(null);
 
   const [navVisible, setNavVisible] = useState(false);
   const [barVisible, setBarVisible] = useState(false);
 
   useGSAP(() => {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    // Start everything hidden
+    gsap.set([boldLineRef.current, scrollHintRef.current], { opacity: 0, y: 60 });
+    gsap.set(scriptLineRef.current, { opacity: 1 }); // visible but empty — typewriter fills it
+    if (scriptLineRef.current) scriptLineRef.current.textContent = '';
 
-    // Step 1 — BG already visible, script + bold start hidden
-    gsap.set([scriptLineRef.current, boldLineRef.current, scrollHintRef.current], {
-      opacity: 0,
-      y: 60,
-    });
+    const tl = gsap.timeline();
 
-    // Step 2 — script line rises (0.3s)
-    tl.to(scriptLineRef.current, { opacity: 1, y: 0, duration: 0.8 }, 0.3);
-
-    // Step 2b — bold line rises 0.15s after script
-    tl.to(boldLineRef.current, { opacity: 1, y: 0, duration: 0.9 }, 0.45);
-
-    // Step 3 — character light sweep on "NORTHERN PAKISTAN"
+    // Step 1 — wait 1s after load, then typewriter on script line
     tl.add(() => {
-      if (!boldLineRef.current) return;
-      const split = SplitText.create(boldLineRef.current, { type: 'chars' });
-      gsap.fromTo(
-        split.chars,
-        { textShadow: '0 0 0px rgba(255,255,255,0)' },
-        {
-          textShadow: '0 0 18px rgba(255,255,255,0.85), 0 4px 12px rgba(0,0,0,0.35)',
-          duration: 0.3,
-          stagger: 0.03,
-          yoyo: true,
-          repeat: 1,
-          ease: 'power1.inOut',
-          onComplete: () => split.revert(),
+      if (!scriptLineRef.current || !cursorRef.current) return;
+      const el = scriptLineRef.current;
+      const cursor = cursorRef.current;
+      let i = 0;
+      const typeInterval = setInterval(() => {
+        el.textContent = SCRIPT_TEXT.slice(0, i + 1);
+        i++;
+        if (i >= SCRIPT_TEXT.length) {
+          clearInterval(typeInterval);
+          // Blink cursor briefly then hide it
+          gsap.to(cursor, {
+            opacity: 0,
+            duration: 0.15,
+            repeat: 3,
+            yoyo: true,
+            onComplete: () => {
+              cursor.style.display = 'none';
+              // Step 2 — "NORTHERN PAKISTAN" rises from below once typing done
+              gsap.to(boldLineRef.current, {
+                opacity: 1,
+                y: 0,
+                duration: 0.9,
+                ease: 'power3.out',
+                onComplete: () => {
+                  // Step 3 — scroll hint
+                  gsap.to(scrollHintRef.current, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+                  // Step 4 — nav
+                  setTimeout(() => setNavVisible(true), 300);
+                  // Step 5 — search bar
+                  setTimeout(() => setBarVisible(true), 600);
+                },
+              });
+            },
+          });
         }
-      );
-    }, 0.9);
+      }, 55); // ~55ms per character = smooth typing speed
+    }, 1); // 1s delay
 
-    // Step 4 — scroll hint fades in (~1.8s)
-    tl.to(scrollHintRef.current, { opacity: 1, y: 0, duration: 0.5 }, 1.8);
-
-    // Step 5 — nav (~2.1s)
-    tl.add(() => setNavVisible(true), 2.1);
-
-    // Step 6 — search bar (~2.4s)
-    tl.add(() => setBarVisible(true), 2.4);
   }, { scope: heroRef });
 
   return (
-    <section ref={heroRef} className="relative w-full h-screen min-h-[860px] overflow-hidden">
-      {/* Background image */}
-      <Image
-        src="/assets/hero-bg.jpg"
-        alt="Northern Pakistan mountains"
-        fill
-        priority
-        className="object-cover object-center"
-        sizes="100vw"
-      />
+    <section ref={heroRef} className="relative w-full h-screen min-h-[860px]">
+      {/* Background video */}
+      <video
+        autoPlay
+        loop
+        muted
+        playsInline
+        className="absolute inset-0 w-full h-full object-cover object-center"
+        onCanPlay={(e) => { (e.target as HTMLVideoElement).playbackRate = 1.8; }}
+      >
+        <source src="/assets/hero-video.webm" type="video/webm" />
+      </video>
 
       {/* Gradient overlay */}
       <div
@@ -84,25 +91,50 @@ export default function HeroSection() {
         }}
       />
 
-      {/* Navbar — starts hidden, animated in at step 5 */}
+      {/* Navbar */}
       <Navbar triggerEntrance={navVisible} />
 
-      {/* Hero copy — centered */}
+      {/* Hero copy */}
       <div className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center">
+        {/* Script line — typewriter fills this */}
         <p
           ref={scriptLineRef}
           className="font-alex-brush text-white text-[56px] leading-none mb-2"
-          style={{ fontFamily: 'var(--font-alex-brush)' }}
+          style={{ fontFamily: 'var(--font-alex-brush)', minHeight: '1.2em' }}
         >
-          Explore the Beauty of
+          {/* filled by typewriter */}
+          <span ref={cursorRef} className="inline-block w-[2px] h-[0.8em] bg-white align-middle ml-0.5 animate-pulse" />
         </p>
-        <p
-          ref={boldLineRef}
-          className="font-anton text-white text-[130px] leading-none tracking-[1.3px]"
-          style={{ fontFamily: 'var(--font-anton)' }}
-        >
-          NORTHERN PAKISTAN
-        </p>
+
+        {/* Bold line + 3D reflection */}
+        <div ref={boldLineRef} className="flex flex-col items-center" style={{ lineHeight: 0 }}>
+          {/* Real text */}
+          <p
+            className="font-anton text-white text-[130px] leading-none tracking-[1.3px]"
+            style={{
+              fontFamily: 'var(--font-anton)',
+              textShadow: '0 8px 32px rgba(0,0,0,0.55), 0 2px 0 rgba(0,0,0,0.4)',
+            }}
+          >
+            NORTHERN PAKISTAN
+          </p>
+
+          {/* Reflection — flipped vertically, fades out downward */}
+          <p
+            className="font-anton text-[130px] leading-none tracking-[1.3px] select-none pointer-events-none"
+            style={{
+              fontFamily: 'var(--font-anton)',
+              transform: 'scaleY(-1)',
+              marginTop: 4,
+              color: 'rgba(0,0,0,0.55)',
+              WebkitMaskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 65%)',
+              maskImage: 'linear-gradient(to bottom, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 65%)',
+              filter: 'blur(2px)',
+            }}
+          >
+            NORTHERN PAKISTAN
+          </p>
+        </div>
       </div>
 
       {/* Scroll hint */}
@@ -114,7 +146,7 @@ export default function HeroSection() {
         Scroll to explore
       </p>
 
-      {/* Search / Filter bar — floats over hero bottom edge */}
+      {/* Search / Filter bar */}
       <SearchFilterBar triggerEntrance={barVisible} />
     </section>
   );

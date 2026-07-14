@@ -37,7 +37,7 @@ export default function SearchFilterBar({ triggerEntrance }: SearchFilterBarProp
   return (
     <div
       ref={barRef}
-      className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 z-30 w-[1200px] max-w-[calc(100vw-48px)]"
+      className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[65%] z-30 w-[1200px] max-w-[calc(100vw-48px)]"
     >
       <div className="bg-white rounded-[20px] shadow-[0px_10px_30px_0px_rgba(0,0,0,0.12)] h-[88px] flex items-center px-8">
         {filters.map((f, i) => (
@@ -64,7 +64,7 @@ export default function SearchFilterBar({ triggerEntrance }: SearchFilterBarProp
         ))}
 
         {/* Explore button */}
-        <button className="ml-4 flex-shrink-0 bg-[#1b7a3d] hover:bg-[#155f30] transition-colors rounded-[16px] h-[72px] w-[124px] flex items-center justify-center gap-2">
+        <button className="ml-4 flex-shrink-0 bg-[#1b7a3d] hover:bg-[#155f30] transition-colors rounded-[16px] h-[72px] w-[124px] flex items-center justify-center gap-2 ring-4 ring-white">
           <Image src="/assets/icon-explore.svg" alt="" width={18} height={18} />
           <span
             className="text-white text-[14px] font-semibold"

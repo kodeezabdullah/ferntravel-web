@@ -17,140 +17,192 @@ const destinations = [
     region: 'Gilgit-Baltistan',
     stops: 'Karimabad [2N] | Passu Cones [1N] | Attabad Lake [1N] | Khunjerab Pass [1N]',
     image: '/assets/hunza-valley.jpg',
-    peekImage: '/assets/skardu-peek.jpg',
-    nextWatermark: 'SK',
+  },
+  {
+    id: 2,
+    name: 'SKARDU EXPEDITION',
+    watermark: 'SKARDU',
+    days: '7 Days',
+    region: 'Gilgit-Baltistan',
+    stops: 'Skardu City [2N] | Deosai Plains [2N] | Sheosar Lake [1N] | Satpara Lake [2N]',
+    image: '/assets/skardu-peek.jpg',
+  },
+  {
+    id: 3,
+    name: 'FAIRY MEADOWS TREK',
+    watermark: 'FAIRY',
+    days: '4 Days',
+    region: 'Diamer, KPK',
+    stops: 'Raikot Bridge [1N] | Fairy Meadows [2N] | Nanga Parbat Base Camp [1N]',
+    image: '/assets/hero-bg.jpg',
   },
 ];
 
 export default function DestinationsCarousel() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const [current] = useState(0);
+  const sectionRef    = useRef<HTMLElement>(null);
+  const slideRef      = useRef<HTMLDivElement>(null);
+  const headingRef    = useRef<HTMLDivElement>(null);
+  const imgRef        = useRef<HTMLDivElement>(null);
+  const infoRef       = useRef<HTMLDivElement>(null);
+  const prevRef       = useRef<HTMLButtonElement>(null);
+  const nextRef       = useRef<HTMLButtonElement>(null);
+  const [current, setCurrent] = useState(0);
 
   useGSAP(() => {
-    const els = sectionRef.current?.querySelectorAll('.reveal-up');
-    if (!els?.length) return;
-    gsap.fromTo(
-      els,
-      { opacity: 0, y: 40 },
-      {
-        opacity: 1,
-        y: 0,
-        duration: 0.7,
-        stagger: 0.12,
-        ease: 'power3.out',
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: 'top 75%',
-        },
-      }
+    const st = { trigger: sectionRef.current, start: 'top 75%' };
+
+    // Heading — drops in from top
+    gsap.fromTo(headingRef.current,
+      { opacity: 0, y: -50 },
+      { opacity: 1, y: 0, duration: 0.8, ease: 'power3.out', delay: 1.5, scrollTrigger: st }
     );
+
+    // Image — slides in from left + slight zoom
+    gsap.fromTo(imgRef.current,
+      { opacity: 0, x: -80, scale: 0.92 },
+      { opacity: 1, x: 0, scale: 1, duration: 1, ease: 'power3.out', delay: 1.8, scrollTrigger: st }
+    );
+
+    // Info panel — slides in from right
+    gsap.fromTo(infoRef.current,
+      { opacity: 0, x: 80 },
+      { opacity: 1, x: 0, duration: 1, ease: 'power3.out', delay: 2.1, scrollTrigger: st }
+    );
+
+    // Arrows — pop in with scale bounce
+    gsap.fromTo([prevRef.current, nextRef.current],
+      { opacity: 0, scale: 0.5 },
+      { opacity: 1, scale: 1, duration: 0.5, ease: 'back.out(2)', delay: 2.5, stagger: 0.15, scrollTrigger: st }
+    );
+
   }, { scope: sectionRef });
+
+  const goTo = (idx: number) => {
+    if (!slideRef.current) return;
+    gsap.to(slideRef.current, {
+      opacity: 0,
+      x: idx > current ? -30 : 30,
+      duration: 0.2,
+      ease: 'power2.in',
+      onComplete: () => {
+        setCurrent(idx);
+        gsap.fromTo(
+          slideRef.current,
+          { opacity: 0, x: idx > current ? 30 : -30 },
+          { opacity: 1, x: 0, duration: 0.35, ease: 'power2.out' }
+        );
+      },
+    });
+  };
+
+  const prev = () => goTo(current === 0 ? destinations.length - 1 : current - 1);
+  const next = () => goTo(current === destinations.length - 1 ? 0 : current + 1);
 
   const dest = destinations[current];
 
   return (
-    <section ref={sectionRef} className="w-full bg-white py-20 px-0 overflow-hidden">
-      {/* Section heading */}
-      <div className="text-center mb-12">
+    <section ref={sectionRef} className="w-full bg-white pt-[64px] pb-20 overflow-hidden">
+
+      {/* Heading */}
+      <div ref={headingRef} className="text-center mb-12" style={{ opacity: 0 }}>
         <p
-          className="font-alex-brush text-[#8a8a85] text-[30px] leading-none mb-2 reveal-up"
+          className="font-alex-brush text-[#8a8a85] text-[30px] leading-none mb-2"
           style={{ fontFamily: 'var(--font-alex-brush)' }}
         >
           Plan Your Trip
         </p>
         <h2
-          className="font-poppins font-bold text-[#3d3229] text-[44px] leading-none reveal-up"
+          className="font-poppins font-bold text-[#3d3229] text-[44px] leading-none"
           style={{ fontFamily: 'var(--font-poppins)' }}
         >
           Where to next?
         </h2>
       </div>
 
-      {/* Carousel layout */}
+      {/* Carousel */}
       <div className="relative flex items-center max-w-[1440px] mx-auto px-[100px]">
+
         {/* Prev arrow */}
-        <button className="absolute left-5 z-10 w-11 h-11 rounded-full border border-[#ede8dc] flex items-center justify-center bg-white hover:bg-[#f5f5f0] transition-colors reveal-up">
-          <Image src="/assets/arrow-left.svg" alt="Previous" width={20} height={20} />
+        <button
+          ref={prevRef}
+          onClick={prev}
+          className="absolute left-8 z-10 w-11 h-11 rounded-full bg-white border border-[#ede8dc] shadow-sm hover:shadow-md hover:border-[#1b7a3d] transition-all flex items-center justify-center"
+          style={{ opacity: 0 }}
+        >
+          <span className="text-[#3d3229] text-[20px] leading-none select-none" style={{ marginTop: '-2px' }}>‹</span>
         </button>
 
-        {/* Destination image */}
-        <div className="relative w-[580px] h-[400px] flex-shrink-0 rounded-[4px] overflow-hidden reveal-up">
-          <Image
-            src={dest.image}
-            alt={dest.name}
-            fill
-            className="object-cover"
-            sizes="580px"
-          />
-          {/* Watermark */}
-          <p
-            className="absolute bottom-0 left-0 font-poppins font-bold text-[90px] leading-none text-white/20 select-none pointer-events-none px-2"
-            style={{ fontFamily: 'var(--font-poppins)' }}
+        {/* Slide content */}
+        <div ref={slideRef} className="flex items-center w-full gap-16">
+
+          {/* Image — animates from left */}
+          <div
+            ref={imgRef}
+            className="relative w-[580px] h-[400px] flex-shrink-0 rounded-[8px] overflow-hidden"
+            style={{ opacity: 0 }}
           >
-            {dest.watermark}
-          </p>
+            <Image src={dest.image} alt={dest.name} fill className="object-cover" sizes="580px" />
+            <p
+              className="absolute bottom-0 left-2 font-poppins font-bold text-[90px] leading-none text-white/20 select-none pointer-events-none"
+              style={{ fontFamily: 'var(--font-poppins)' }}
+            >
+              {dest.watermark}
+            </p>
+          </div>
+
+          {/* Info panel — animates from right */}
+          <div ref={infoRef} className="flex-1" style={{ opacity: 0 }}>
+            <h3
+              className="font-poppins font-bold text-[#3d3229] text-[22px] mb-4"
+              style={{ fontFamily: 'var(--font-poppins)' }}
+            >
+              {dest.name}
+            </h3>
+            <div className="flex items-center gap-6 mb-5">
+              <div className="flex items-center gap-2">
+                <Image src="/assets/icon-duration.svg" alt="Duration" width={16} height={16} />
+                <span className="text-[12.5px] text-[#5d5d5a]" style={{ fontFamily: 'var(--font-inter)' }}>{dest.days}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <Image src="/assets/icon-location.svg" alt="Location" width={16} height={16} />
+                <span className="text-[12.5px] text-[#5d5d5a]" style={{ fontFamily: 'var(--font-inter)' }}>{dest.region}</span>
+              </div>
+            </div>
+            <p className="text-[13px] font-semibold text-[#3d3229] mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+              Destination:
+            </p>
+            <p className="text-[12.5px] text-[#5d5d5a] leading-[1.6] mb-8 max-w-[500px]" style={{ fontFamily: 'var(--font-inter)' }}>
+              {dest.stops}
+            </p>
+
+            {/* Dots */}
+            <div className="flex gap-2 mb-8">
+              {destinations.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => goTo(i)}
+                  className="rounded-full transition-all duration-300"
+                  style={{ width: i === current ? 24 : 8, height: 8, background: i === current ? '#1b7a3d' : '#c8e6d0' }}
+                />
+              ))}
+            </div>
+
+            <button className="bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white text-[13px] font-semibold rounded-full px-8 h-12">
+              Explore in App
+            </button>
+          </div>
         </div>
 
         {/* Next arrow */}
-        <button className="absolute left-[680px] z-10 w-11 h-11 rounded-full border border-[#ede8dc] flex items-center justify-center bg-white hover:bg-[#f5f5f0] transition-colors reveal-up">
-          <span className="text-[#5d5d5a] text-[18px]">›</span>
+        <button
+          ref={nextRef}
+          onClick={next}
+          className="absolute right-8 z-10 w-11 h-11 rounded-full bg-white border border-[#ede8dc] shadow-sm hover:shadow-md hover:border-[#1b7a3d] transition-all flex items-center justify-center"
+          style={{ opacity: 0 }}
+        >
+          <span className="text-[#3d3229] text-[20px] leading-none select-none" style={{ marginTop: '-2px' }}>›</span>
         </button>
 
-        {/* Info panel */}
-        <div className="ml-20 flex-1 reveal-up">
-          <h3
-            className="font-poppins font-bold text-[#3d3229] text-[22px] mb-4"
-            style={{ fontFamily: 'var(--font-poppins)' }}
-          >
-            {dest.name}
-          </h3>
-          <div className="flex items-center gap-6 mb-5">
-            <div className="flex items-center gap-2">
-              <Image src="/assets/icon-duration.svg" alt="Duration" width={16} height={16} />
-              <span className="text-[12.5px] text-[#5d5d5a]" style={{ fontFamily: 'var(--font-inter)' }}>
-                {dest.days}
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Image src="/assets/icon-location.svg" alt="Location" width={16} height={16} />
-              <span className="text-[12.5px] text-[#5d5d5a]" style={{ fontFamily: 'var(--font-inter)' }}>
-                {dest.region}
-              </span>
-            </div>
-          </div>
-          <p
-            className="text-[13px] font-semibold text-[#3d3229] mb-2"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            Destination:
-          </p>
-          <p
-            className="text-[12.5px] text-[#5d5d5a] leading-[1.6] mb-8 max-w-[500px]"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            {dest.stops}
-          </p>
-          <button className="bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white text-[13px] font-semibold rounded-full px-8 h-12">
-            Explore in App
-          </button>
-        </div>
-
-        {/* Peek of next card */}
-        <div className="absolute right-0 w-[80px] h-[400px] overflow-hidden rounded-l-[4px] opacity-60">
-          <Image
-            src={dest.peekImage}
-            alt="Next destination"
-            fill
-            className="object-cover"
-            sizes="80px"
-          />
-          <p
-            className="absolute bottom-0 left-0 font-poppins font-bold text-[90px] leading-none text-white/20 select-none pointer-events-none"
-            style={{ fontFamily: 'var(--font-poppins)' }}
-          >
-            {dest.nextWatermark}
-          </p>
-        </div>
       </div>
     </section>
   );

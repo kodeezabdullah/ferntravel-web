@@ -12,10 +12,7 @@ export default function HomePage() {
       {/* Hero + Nav (nav overlaid inside HeroSection) */}
       <HeroSection />
 
-      {/* Spacer to account for Search bar overlapping hero bottom */}
-      <div className="h-[44px]" />
-
-      {/* Destinations */}
+      {/* Destinations — pt-[60px] gives room for the search bar to straddle the boundary */}
       <DestinationsCarousel />
 
       {/* Why Fernweh */}

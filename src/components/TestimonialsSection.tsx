@@ -73,6 +73,7 @@ export default function TestimonialsSection() {
           duration: 0.7,
           stagger: 0.1,
           ease: 'power3.out',
+          delay: 1.2,
           scrollTrigger: { trigger: sectionRef.current, start: 'top 75%' },
         }
       );
@@ -147,8 +148,12 @@ export default function TestimonialsSection() {
 
               {/* Reviewer */}
               <div className="flex items-center gap-3 px-6 pb-4">
-                <div className="w-10 h-10 rounded-full overflow-hidden flex-shrink-0">
-                  <Image src={t.avatar} alt={t.name} width={40} height={40} className="object-cover w-full h-full" />
+                {/* Avatar box */}
+                <div className="w-10 h-10 rounded-full flex-shrink-0 bg-[#c8e6d0] flex items-center justify-center overflow-hidden border-2 border-[#1b7a3d]/20">
+                  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="8" r="4" fill="#1b7a3d" opacity="0.7"/>
+                    <path d="M4 20c0-4 3.582-7 8-7s8 3 8 7" stroke="#1b7a3d" strokeWidth="1.8" strokeLinecap="round" opacity="0.7"/>
+                  </svg>
                 </div>
                 <div>
                   <p

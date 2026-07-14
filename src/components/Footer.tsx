@@ -32,7 +32,7 @@ export default function Footer() {
       />
 
       {/* Dark overlay */}
-      <div className="absolute inset-0 bg-[#0f4d28]/80" />
+      <div className="absolute inset-0 bg-[#0f4d28]/45" />
 
       <div className="relative z-10 h-full flex flex-col px-[80px] pt-[50px]">
         {/* Brand row */}
@@ -55,7 +55,7 @@ export default function Footer() {
 
           {/* Google Play badge — pushed to far right */}
           <div className="ml-auto">
-            <Image src="/assets/google-play.png" alt="Get it on Google Play" width={126} height={126} className="object-contain" />
+            <Image src="/assets/google-play.svg" alt="Get it on Google Play" width={140} height={48} className="object-contain" />
           </div>
         </div>
 
