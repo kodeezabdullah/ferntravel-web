@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Anton, Alex_Brush, Inter, Poppins } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const anton = Anton({
@@ -39,7 +40,10 @@ export default function RootLayout({
       lang="en"
       className={`${anton.variable} ${alexBrush.variable} ${inter.variable} ${poppins.variable} h-full antialiased`}
     >
-      <body className="min-h-full bg-[#faf7f2]">{children}</body>
+      <body className="min-h-full bg-[#faf7f2]">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
