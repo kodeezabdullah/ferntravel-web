@@ -85,9 +85,11 @@ export default function HeroSection() {
         muted
         playsInline
         preload="auto"
-        poster="/assets/hero-bg.jpg"
         className="absolute inset-0 w-full h-full object-cover object-center"
-        onCanPlay={(e) => { (e.target as HTMLVideoElement).playbackRate = 1.8; }}
+        onCanPlay={(e) => {
+          (e.target as HTMLVideoElement).playbackRate = 1.8;
+          window.dispatchEvent(new Event('fernweh:videoready'));
+        }}
       >
         <source src="/assets/hero-video.webm" type="video/webm" />
       </video>

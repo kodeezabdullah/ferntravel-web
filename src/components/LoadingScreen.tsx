@@ -21,8 +21,8 @@ export default function LoadingScreen() {
 
     el.textContent = '';
 
-    // Progress bar crawls to 80% while typing / loading
-    gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 0.8, duration: 3, ease: 'power1.out' });
+    // Bar crawls to 85% while video loads in background
+    gsap.fromTo(bar, { scaleX: 0 }, { scaleX: 0.85, duration: 6, ease: 'power1.out' });
 
     let i = 0;
     const interval = setInterval(() => {
@@ -31,27 +31,25 @@ export default function LoadingScreen() {
       if (i >= LOADING_TEXT.length) {
         clearInterval(interval);
 
-        // Subtitle fades in after typing finishes
         gsap.to(sub, { opacity: 1, y: 0, duration: 0.6, ease: 'power2.out', delay: 0.25 });
 
-        const minWait = new Promise<void>((res) => setTimeout(res, 900));
-        const pageReady = new Promise<void>((res) => {
-          if (document.readyState === 'complete') res();
-          else window.addEventListener('load', () => res(), { once: true });
+        // Wait for video to be ready to play (minimum 1.2s for animation to breathe)
+        const minWait = new Promise<void>((res) => setTimeout(res, 1200));
+        const videoReady = new Promise<void>((res) => {
+          window.addEventListener('fernweh:videoready', () => res(), { once: true });
         });
-        // Never block more than 5s on a slow connection
-        const maxWait = new Promise<void>((res) => setTimeout(res, 5000));
+        // Hard fallback — never block longer than 8s even on very slow connections
+        const maxWait = new Promise<void>((res) => setTimeout(res, 8000));
 
-        Promise.race([Promise.all([minWait, pageReady]), maxWait]).then(() => {
-          // Snap bar to 100%, then fade the whole overlay out
+        Promise.race([Promise.all([minWait, videoReady]), maxWait]).then(() => {
           gsap.to(bar, {
             scaleX: 1,
-            duration: 0.25,
+            duration: 0.3,
             ease: 'power2.in',
             onComplete: () => {
               gsap.to(overlayRef.current, {
                 opacity: 0,
-                duration: 0.65,
+                duration: 0.7,
                 ease: 'power2.inOut',
                 delay: 0.1,
                 onComplete: () => {
@@ -76,7 +74,6 @@ export default function LoadingScreen() {
       className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
       style={{ background: '#faf7f2' }}
     >
-      {/* Main typewriter text */}
       <p
         ref={textRef}
         style={{
@@ -89,7 +86,6 @@ export default function LoadingScreen() {
         }}
       />
 
-      {/* Subtitle */}
       <p
         ref={subtitleRef}
         style={{

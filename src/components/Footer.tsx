@@ -27,6 +27,7 @@ export default function Footer() {
         src="/assets/footer-bg.jpg"
         alt=""
         fill
+        priority
         className="object-cover object-center"
         sizes="100vw"
       />

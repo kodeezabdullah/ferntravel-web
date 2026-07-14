@@ -9,29 +9,27 @@ import { ScrollTrigger } from 'gsap/ScrollTrigger';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function EntranceTicketSection() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const textRef    = useRef<HTMLDivElement>(null);
-  const baseRef    = useRef<HTMLImageElement>(null);
-  const tiltedRef  = useRef<HTMLImageElement>(null);
+  const sectionRef  = useRef<HTMLElement>(null);
+  const textRef     = useRef<HTMLDivElement>(null);
+  const baseRef     = useRef<HTMLDivElement>(null);
+  const tiltedRef   = useRef<HTMLDivElement>(null);
 
   useGSAP(() => {
-    if (!textRef.current || !baseRef.current || !tiltedRef.current) return;
-
     const st = { trigger: sectionRef.current, start: 'top 70%' };
 
-    // Left slides in from left — 2s delay after section enters
+    // Left text slides in from left
     gsap.fromTo(textRef.current,
       { opacity: 0, x: -80 },
       { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out', delay: 1.2, scrollTrigger: st }
     );
 
-    // Both tickets slide in from right — 2s delay
+    // Both tickets slide in from right
     gsap.fromTo([baseRef.current, tiltedRef.current],
       { opacity: 0, x: 80 },
       { opacity: 1, x: 0, duration: 0.8, ease: 'power3.out', delay: 1.2, scrollTrigger: st }
     );
 
-    // Top ticket rotates after 2s + 1.5s extra
+    // Top ticket rotates after entry
     gsap.fromTo(tiltedRef.current,
       { rotation: 0 },
       { rotation: 18, duration: 0.7, ease: 'power2.out', delay: 2.7, scrollTrigger: st }
@@ -62,37 +60,44 @@ export default function EntranceTicketSection() {
         </button>
       </div>
 
-      {/* RIGHT — mix-blend on the container so tickets composite each other normally first */}
-      <div className="relative flex-shrink-0 flex items-center justify-center" style={{ width: 520, height: 400, mixBlendMode: 'multiply' }}>
-        {/* Base — flat, stays still */}
-        <Image
+      {/* RIGHT — mix-blend on container so tickets composite each other first */}
+      <div
+        className="relative flex-shrink-0"
+        style={{ width: 520, height: 400, mixBlendMode: 'multiply' }}
+      >
+        {/* Base ticket wrapper — GSAP animates this div */}
+        <div
           ref={baseRef}
-          src="/assets/ticket.png"
-          alt="Trek Pass"
-          width={480}
-          height={260}
-          className="absolute rounded-2xl"
-          style={{ opacity: 0, top: '50%', left: '50%', transform: 'translate(-50%, -50%)', objectFit: 'cover' }}
-        />
+          className="absolute inset-0 flex items-center justify-center"
+          style={{ opacity: 0 }}
+        >
+          <Image
+            src="/assets/ticket.png"
+            alt="Trek Pass"
+            width={480}
+            height={260}
+            loading="eager"
+          />
+        </div>
 
-        {/* Top — same position, rotates after 1.5s */}
-        <Image
+        {/* Tilted ticket wrapper — GSAP animates this div, rotation applied here */}
+        <div
           ref={tiltedRef}
-          src="/assets/ticket.png"
-          alt="Trek Pass tilted"
-          width={480}
-          height={260}
-          className="absolute rounded-2xl"
+          className="absolute inset-0 flex items-center justify-center"
           style={{
             opacity: 0,
-            top: '50%',
-            left: '50%',
-            translate: '-50% -50%',
             transformOrigin: 'center center',
             filter: 'drop-shadow(-14px 18px 30px rgba(0,0,0,0.28))',
-            objectFit: 'cover',
           }}
-        />
+        >
+          <Image
+            src="/assets/ticket.png"
+            alt="Trek Pass tilted"
+            width={480}
+            height={260}
+            loading="eager"
+          />
+        </div>
       </div>
     </section>
   );

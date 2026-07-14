@@ -144,6 +144,7 @@ export default function FeaturesSection() {
                   fill
                   className="object-cover"
                   sizes="200px"
+                  loading="eager"
                 />
               </div>
 
