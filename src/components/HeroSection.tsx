@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 import Navbar from './Navbar';
@@ -18,55 +18,63 @@ export default function HeroSection() {
   const [navVisible, setNavVisible] = useState(false);
   const [barVisible, setBarVisible] = useState(false);
 
+  // Hide animated elements immediately on mount
   useGSAP(() => {
-    // Start everything hidden
     gsap.set([boldLineRef.current, scrollHintRef.current], { opacity: 0, y: 60 });
-    gsap.set(scriptLineRef.current, { opacity: 1 }); // visible but empty — typewriter fills it
+    gsap.set(scriptLineRef.current, { opacity: 1 });
     if (scriptLineRef.current) scriptLineRef.current.textContent = '';
-
-    const tl = gsap.timeline();
-
-    // Step 1 — wait 1s after load, then typewriter on script line
-    tl.add(() => {
-      if (!scriptLineRef.current || !cursorRef.current) return;
-      const el = scriptLineRef.current;
-      const cursor = cursorRef.current;
-      let i = 0;
-      const typeInterval = setInterval(() => {
-        el.textContent = SCRIPT_TEXT.slice(0, i + 1);
-        i++;
-        if (i >= SCRIPT_TEXT.length) {
-          clearInterval(typeInterval);
-          // Blink cursor briefly then hide it
-          gsap.to(cursor, {
-            opacity: 0,
-            duration: 0.15,
-            repeat: 3,
-            yoyo: true,
-            onComplete: () => {
-              cursor.style.display = 'none';
-              // Step 2 — "NORTHERN PAKISTAN" rises from below once typing done
-              gsap.to(boldLineRef.current, {
-                opacity: 1,
-                y: 0,
-                duration: 0.9,
-                ease: 'power3.out',
-                onComplete: () => {
-                  // Step 3 — scroll hint
-                  gsap.to(scrollHintRef.current, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
-                  // Step 4 — nav
-                  setTimeout(() => setNavVisible(true), 300);
-                  // Step 5 — search bar
-                  setTimeout(() => setBarVisible(true), 600);
-                },
-              });
-            },
-          });
-        }
-      }, 55); // ~55ms per character = smooth typing speed
-    }, 1); // 1s delay
-
   }, { scope: heroRef });
+
+  // Start animation only after loading screen finishes
+  useEffect(() => {
+    let typeInterval: ReturnType<typeof setInterval> | null = null;
+
+    const startAnim = () => {
+      setTimeout(() => {
+        if (!scriptLineRef.current || !cursorRef.current) return;
+        const el = scriptLineRef.current;
+        const cursor = cursorRef.current;
+        let i = 0;
+
+        typeInterval = setInterval(() => {
+          el.textContent = SCRIPT_TEXT.slice(0, i + 1);
+          i++;
+          if (i >= SCRIPT_TEXT.length) {
+            clearInterval(typeInterval!);
+            typeInterval = null;
+
+            gsap.to(cursor, {
+              opacity: 0,
+              duration: 0.15,
+              repeat: 3,
+              yoyo: true,
+              onComplete: () => {
+                cursor.style.display = 'none';
+
+                gsap.to(boldLineRef.current, {
+                  opacity: 1,
+                  y: 0,
+                  duration: 0.9,
+                  ease: 'power3.out',
+                  onComplete: () => {
+                    gsap.to(scrollHintRef.current, { opacity: 1, y: 0, duration: 0.5, ease: 'power2.out' });
+                    setTimeout(() => setNavVisible(true), 300);
+                    setTimeout(() => setBarVisible(true), 600);
+                  },
+                });
+              },
+            });
+          }
+        }, 55);
+      }, 300);
+    };
+
+    window.addEventListener('fernweh:loaded', startAnim, { once: true });
+    return () => {
+      window.removeEventListener('fernweh:loaded', startAnim);
+      if (typeInterval) clearInterval(typeInterval);
+    };
+  }, []);
 
   return (
     <section ref={heroRef} className="relative w-full h-screen min-h-[860px]">
@@ -76,6 +84,8 @@ export default function HeroSection() {
         loop
         muted
         playsInline
+        preload="auto"
+        poster="/assets/hero-bg.jpg"
         className="absolute inset-0 w-full h-full object-cover object-center"
         onCanPlay={(e) => { (e.target as HTMLVideoElement).playbackRate = 1.8; }}
       >
@@ -102,14 +112,13 @@ export default function HeroSection() {
           className="font-alex-brush text-white text-[56px] leading-none mb-2"
           style={{ fontFamily: 'var(--font-alex-brush)', minHeight: '1.2em' }}
         >
-          {/* filled by typewriter */}
           <span ref={cursorRef} className="inline-block w-[2px] h-[0.8em] bg-white align-middle ml-0.5 animate-pulse" />
         </p>
 
         {/* Bold line + 3D reflection */}
-        <div ref={boldLineRef} className="flex flex-col items-center" style={{ lineHeight: 0 }}>
-          {/* Real text */}
+        <div className="flex flex-col items-center" style={{ lineHeight: 0 }}>
           <p
+            ref={boldLineRef}
             className="font-anton text-white text-[130px] leading-none tracking-[1.3px]"
             style={{
               fontFamily: 'var(--font-anton)',

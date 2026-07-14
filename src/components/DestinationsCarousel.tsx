@@ -141,7 +141,7 @@ export default function DestinationsCarousel() {
             className="relative w-[580px] h-[400px] flex-shrink-0 rounded-[8px] overflow-hidden"
             style={{ opacity: 0 }}
           >
-            <Image src={dest.image} alt={dest.name} fill className="object-cover" sizes="580px" />
+            <Image src={dest.image} alt={dest.name} fill className="object-cover" sizes="580px" priority={current === 0} />
             <p
               className="absolute bottom-0 left-2 font-poppins font-bold text-[90px] leading-none text-white/20 select-none pointer-events-none"
               style={{ fontFamily: 'var(--font-poppins)' }}
