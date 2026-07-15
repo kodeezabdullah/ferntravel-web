@@ -1,20 +1,12 @@
 'use client';
 
 import { useRef } from 'react';
-import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
 interface SearchFilterBarProps {
   triggerEntrance?: boolean;
 }
-
-const filters = [
-  { icon: '/assets/icon-destination.svg', label: 'Destination', placeholder: 'Where do you want to go?' },
-  { icon: '/assets/icon-triptype.svg', label: 'Trip Type', placeholder: 'Trek, Camp, or Cultural' },
-  { icon: '/assets/icon-difficulty.svg', label: 'Difficulty', placeholder: 'Easy, Moderate, Hard' },
-  { icon: '/assets/icon-budget.svg', label: 'Budget', placeholder: 'Average price range' },
-];
 
 export default function SearchFilterBar({ triggerEntrance }: SearchFilterBarProps) {
   const barRef = useRef<HTMLDivElement>(null);
@@ -34,43 +26,64 @@ export default function SearchFilterBar({ triggerEntrance }: SearchFilterBarProp
     });
   }, [triggerEntrance]);
 
+  const items = [
+    { label: 'Destination', value: 'Northern Areas' },
+    { label: 'Check-in', value: '18 Jul 2026' },
+    { label: 'Check-out', value: '21 Jul 2026' },
+    { label: 'Travelers', value: '2 Adults' },
+  ];
+
   return (
     <div
       ref={barRef}
-      className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[65%] z-30 w-[1200px] max-w-[calc(100vw-48px)]"
+      className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-[50%] z-30 w-[1200px] max-w-[calc(100vw-48px)] px-4 md:px-0"
     >
-      <div className="bg-white rounded-[20px] shadow-[0px_10px_30px_0px_rgba(0,0,0,0.12)] h-[88px] flex items-center px-8">
-        {filters.map((f, i) => (
-          <div key={f.label} className="flex-1 flex items-center gap-3 min-w-0">
-            <Image src={f.icon} alt={f.label} width={20} height={20} className="flex-shrink-0" />
-            <div className="min-w-0">
-              <p
-                className="text-[12.5px] font-semibold text-[#3d3229] leading-none mb-1"
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                {f.label}
-              </p>
-              <p
-                className="text-[11.5px] text-[#8a8a85] leading-none truncate"
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                {f.placeholder}
-              </p>
+      <div className="bg-white rounded-[24px] shadow-[0px_12px_40px_0px_rgba(0,0,0,0.08)] flex max-md:flex-col items-center justify-between p-4 md:p-3 pl-8 md:pl-10 border border-[#ede8dc]">
+        <div className="flex flex-1 max-md:flex-col max-md:w-full items-center justify-between gap-6 md:gap-8">
+          {items.map((item, idx) => (
+            <div key={item.label} className="flex-1 flex items-center justify-between w-full min-w-0">
+              <div className="min-w-0">
+                <p
+                  className="text-[11px] uppercase tracking-wider font-bold text-[#8a8a85] mb-1"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  {item.label}
+                </p>
+                <p
+                  className="text-[15px] font-bold text-[#3d3229] truncate"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  {item.value}
+                </p>
+              </div>
+              {idx < items.length - 1 && (
+                <div className="hidden md:block w-px h-10 bg-[#ede8dc] ml-auto mr-4" />
+              )}
             </div>
-            {i < filters.length - 1 && (
-              <div className="w-px h-12 bg-[#ede8dc] flex-shrink-0 ml-auto mr-4" />
-            )}
-          </div>
-        ))}
+          ))}
+        </div>
 
-        {/* Explore button */}
-        <button className="ml-4 flex-shrink-0 bg-[#1b7a3d] hover:bg-[#155f30] transition-colors rounded-[16px] h-[72px] w-[124px] flex items-center justify-center gap-2 ring-4 ring-white">
-          <Image src="/assets/icon-explore.svg" alt="" width={18} height={18} />
+        {/* Search button */}
+        <button className="max-md:mt-4 max-md:w-full flex-shrink-0 bg-[#1b7a3d] hover:bg-[#155f30] transition-colors rounded-full h-[60px] px-8 flex items-center justify-center gap-3 cursor-pointer shadow-md">
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2.5"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            className="text-white"
+          >
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
           <span
-            className="text-white text-[14px] font-semibold"
+            className="text-white text-[15px] font-bold"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
-            Explore
+            Search
           </span>
         </button>
       </div>
