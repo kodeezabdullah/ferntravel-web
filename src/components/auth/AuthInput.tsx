@@ -9,10 +9,10 @@ interface AuthInputProps extends InputHTMLAttributes<HTMLInputElement> {
 
 export default function AuthInput({ label, id, rightSlot, className, ...rest }: AuthInputProps) {
   return (
-    <div className="flex flex-col gap-1.5 mb-4">
+    <div className="flex flex-col gap-1 mb-3">
       <label
         htmlFor={id}
-        className="text-[13px] font-medium"
+        className="text-[12px] font-medium"
         style={{ color: 'rgba(255,255,255,0.65)', fontFamily: 'var(--font-inter), sans-serif' }}
       >
         {label}
@@ -22,7 +22,7 @@ export default function AuthInput({ label, id, rightSlot, className, ...rest }: 
         <input
           id={id}
           {...rest}
-          className={`w-full rounded-xl px-4 py-3 text-[14px] text-white outline-none transition-all duration-150 ${className ?? ''}`}
+          className={`w-full rounded-xl px-3.5 py-2 text-[13px] text-white outline-none transition-all duration-150 ${className ?? ''}`}
           style={{
             background: 'rgba(255,255,255,0.08)',
             border: '1px solid rgba(255,255,255,0.10)',

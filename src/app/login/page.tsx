@@ -43,7 +43,7 @@ function GoogleIcon() {
 /* ── Or divider ── */
 function OrDivider() {
   return (
-    <div className="flex items-center gap-3 my-5">
+    <div className="flex items-center gap-3 my-3.5">
       <div className="flex-1 h-px" style={{ background: 'rgba(255,255,255,0.12)' }} />
       <span className="text-[12px]" style={{ color: 'rgba(255,255,255,0.35)', fontFamily: 'var(--font-inter)' }}>
         or
@@ -79,7 +79,7 @@ export default function LoginPage() {
         />
 
         {/* Heading */}
-        <div className="mb-6">
+        <div className="mb-4.5">
           <h2
             className="text-white text-[22px] font-bold mb-1"
             style={{ fontFamily: 'var(--font-poppins), sans-serif' }}
@@ -120,7 +120,7 @@ export default function LoginPage() {
         />
 
         {/* Remember + Forgot */}
-        <div className="flex items-center justify-between mb-6 mt-1">
+        <div className="flex items-center justify-between mb-4 mt-0.5">
           <label className="flex items-center gap-2 cursor-pointer select-none">
             <input
               id="remember-me"
@@ -177,7 +177,7 @@ export default function LoginPage() {
 
         {/* Footer */}
         <p
-          className="text-center text-[13px] mt-6"
+          className="text-center text-[13px] mt-4"
           style={{ color: 'rgba(255,255,255,0.38)', fontFamily: 'var(--font-inter)' }}
         >
           Not registered yet?{' '}

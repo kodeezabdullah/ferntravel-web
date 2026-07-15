@@ -7,7 +7,7 @@ interface AuthCardProps {
 export default function AuthCard({ children }: AuthCardProps) {
   return (
     <div
-      className="w-full max-w-[420px] rounded-2xl p-8"
+      className="w-full rounded-3xl px-5 py-4"
       style={{
         background: 'rgba(255, 255, 255, 0.055)',
         border: '1px solid rgba(255, 255, 255, 0.10)',

@@ -6,67 +6,70 @@ interface AuthLayoutProps {
   headline: ReactNode;
   /** Short caption beneath the headline */
   subtext: string;
-  /** The right-panel content (the form card) */
+  /** The card contents — floats on the right over the photo */
   children: ReactNode;
 }
 
 export default function AuthLayout({ headline, subtext, children }: AuthLayoutProps) {
   return (
     <div
-      className="flex h-screen w-full overflow-hidden"
+      className="relative min-h-screen w-full overflow-y-auto"
       style={{ fontFamily: 'var(--font-inter), sans-serif' }}
     >
-      {/* ── LEFT PANEL (55%) ── */}
-      <div className="relative hidden md:flex md:w-[55%] flex-col">
-        {/* Background photo */}
+      {/* ── Full-bleed background photo (fixed to prevent scrolling) ── */}
+      <div className="fixed inset-0 -z-10 w-full h-full">
         <Image
-          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1600&q=80"
+          src="https://images.unsplash.com/photo-1506905925346-21bda4d32df4?auto=format&fit=crop&w=1920&q=85"
           alt="Mountain landscape — Hunza Valley, Pakistan"
           fill
           className="object-cover object-center"
           priority
           unoptimized
         />
-
-        {/* Dark gradient overlay — stronger at bottom for text */}
+        {/* Gradient overlay */}
         <div
           className="absolute inset-0"
           style={{
             background:
-              'linear-gradient(to top, rgba(0,0,0,0.82) 0%, rgba(0,0,0,0.45) 45%, rgba(0,0,0,0.18) 100%)',
+              'linear-gradient(to right, rgba(0,0,0,0.58) 0%, rgba(0,0,0,0.22) 58%, rgba(0,0,0,0.10) 100%)',
           }}
         />
-
-        {/* Top-left wordmark */}
-        <div className="relative z-10 p-9">
-          <span
-            className="text-white text-2xl font-black tracking-wide select-none"
-            style={{ fontFamily: 'var(--font-poppins), sans-serif', letterSpacing: '0.04em' }}
-          >
-            Fernweh
-          </span>
-        </div>
-
-        {/* Bottom-left headline + subtext */}
-        <div className="relative z-10 mt-auto p-9 pb-14">
-          <h1
-            className="text-white text-5xl font-black leading-[1.15] mb-4"
-            style={{ fontFamily: 'var(--font-poppins), sans-serif' }}
-          >
-            {headline}
-          </h1>
-          <p className="text-white/60 text-[15px] leading-relaxed max-w-[340px]">
-            {subtext}
-          </p>
-        </div>
       </div>
 
-      {/* ── RIGHT PANEL (45%) ── */}
+      {/* ── Wordmark — top-left ── */}
+      <div className="absolute top-9 left-9 z-10 pointer-events-none">
+        <span
+          className="text-white text-2xl font-black select-none"
+          style={{ fontFamily: 'var(--font-poppins), sans-serif', letterSpacing: '0.04em' }}
+        >
+          Fernweh
+        </span>
+      </div>
+
+      {/* ── Headline + subtext — bottom-left ── */}
+      <div className="absolute bottom-14 left-9 z-10 max-w-[460px] pointer-events-none hidden md:block">
+        <h1
+          className="text-white text-5xl font-black leading-[1.15] mb-4"
+          style={{ fontFamily: 'var(--font-poppins), sans-serif' }}
+        >
+          {headline}
+        </h1>
+        <p className="text-[15px] leading-relaxed" style={{ color: 'rgba(255,255,255,0.62)' }}>
+          {subtext}
+        </p>
+      </div>
+
+      {/* ── Card wrapper — allows content to determine height and page to scroll ── */}
       <div
-        className="flex flex-1 md:w-[45%] items-center justify-center px-6 py-10 overflow-y-auto"
-        style={{ background: '#0a0a0a' }}
+        className="
+          relative z-10 min-h-screen w-full flex items-center py-10 md:py-6
+          md:justify-end md:pr-[8%]
+          max-md:justify-center max-md:px-4 max-md:items-end max-md:pb-6
+        "
       >
-        {children}
+        <div className="md:w-[420px] max-md:w-full">
+          {children}
+        </div>
       </div>
     </div>
   );
