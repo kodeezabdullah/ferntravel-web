@@ -1,5 +1,5 @@
 import HeroSection from '@/components/HeroSection';
-import DestinationsCarousel from '@/components/DestinationsCarousel';
+import ToursSection from '@/components/ToursSection';
 import FeaturesSection from '@/components/FeaturesSection';
 import EntranceTicketSection from '@/components/EntranceTicketSection';
 import WordmarkSection from '@/components/WordmarkSection';
@@ -12,8 +12,8 @@ export default function HomePage() {
       {/* Hero + Nav (nav overlaid inside HeroSection) */}
       <HeroSection />
 
-      {/* Destinations — pt-[60px] gives room for the search bar to straddle the boundary */}
-      <DestinationsCarousel />
+      {/* Latest Tours with category filters */}
+      <ToursSection />
 
       {/* Why Fernweh */}
       <FeaturesSection />
