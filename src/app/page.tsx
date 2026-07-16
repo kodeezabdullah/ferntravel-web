@@ -1,7 +1,9 @@
 import HeroSection from '@/components/HeroSection';
-import ToursSection from '@/components/ToursSection';
-import OperatorsSection from '@/components/OperatorsSection';
-import MapSection from '@/components/MapSection';
+import DestinationsCarousel from '@/components/DestinationsCarousel';
+import FeaturesSection from '@/components/FeaturesSection';
+import EntranceTicketSection from '@/components/EntranceTicketSection';
+import WordmarkSection from '@/components/WordmarkSection';
+import TestimonialsSection from '@/components/TestimonialsSection';
 import Footer from '@/components/Footer';
 
 export default function HomePage() {
@@ -10,14 +12,20 @@ export default function HomePage() {
       {/* Hero + Nav (nav overlaid inside HeroSection) */}
       <HeroSection />
 
-      {/* Latest Tours with category filters */}
-      <ToursSection />
+      {/* Destinations — pt-[60px] gives room for the search bar to straddle the boundary */}
+      <DestinationsCarousel />
 
-      {/* Best Operators Section */}
-      <OperatorsSection />
+      {/* Why Fernweh */}
+      <FeaturesSection />
 
-      {/* Explore the Map Section */}
-      <MapSection />
+      {/* Entrance Ticket */}
+      <EntranceTicketSection />
+
+      {/* Wordmark photo-clip */}
+      <WordmarkSection />
+
+      {/* Testimonials infinite scroll */}
+      <TestimonialsSection />
 
       {/* Footer */}
       <Footer />

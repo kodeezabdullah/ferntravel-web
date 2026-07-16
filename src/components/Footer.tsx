@@ -1,95 +1,106 @@
-import Link from 'next/link';
+import Image from 'next/image';
 
-const footerColumns = [
+const footerLinks = [
   {
     heading: 'Explore',
-    links: [
-      { name: 'Tours', href: '#' },
-      { name: 'Operators', href: '#' },
-      { name: 'Explore Map', href: '#' },
-    ],
+    links: ['Destinations', 'Travel Agencies', 'How It Works'],
+  },
+  {
+    heading: 'For Operators',
+    links: ['Register as Operator', 'Operator Login'],
   },
   {
     heading: 'Company',
-    links: [
-      { name: 'About', href: '#' },
-      { name: 'Contact', href: '#' },
-      { name: 'Careers', href: '#' },
-    ],
+    links: ['About Fernweh', 'Contact'],
   },
   {
     heading: 'Legal',
-    links: [
-      { name: 'Terms & Privacy', href: '#' },
-      { name: 'Cancellation Policy', href: '#' },
-    ],
+    links: ['Privacy Policy', 'Terms & Conditions'],
   },
 ];
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-[#0f4d28] text-white pt-16 pb-8 px-6 md:px-12 border-t border-white/10">
-      <div className="max-w-[1200px] mx-auto">
-        {/* Main Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-8 md:gap-12 pb-12">
-          {/* Left column */}
-          <div className="md:col-span-5 flex flex-col gap-2">
-            <span
-              className="text-white text-3xl font-black tracking-[0.04em]"
-              style={{ fontFamily: 'var(--font-poppins), sans-serif' }}
-            >
-              Fernweh
-            </span>
+    <footer className="relative w-full h-[460px] overflow-hidden">
+      {/* Background photo */}
+      <Image
+        src="/assets/footer-bg.jpg"
+        alt=""
+        fill
+        priority
+        className="object-cover object-center"
+        sizes="100vw"
+      />
+
+      {/* Dark overlay */}
+      <div className="absolute inset-0 bg-[#0f4d28]/45" />
+
+      <div className="relative z-10 h-full flex flex-col px-[80px] pt-[50px]">
+        {/* Brand row */}
+        <div className="flex items-center gap-4 mb-12">
+          <Image src="/assets/logo-footer.png" alt="Fernweh logo" width={70} height={63} className="object-contain" />
+          <div>
             <p
-              className="italic text-white/80 text-[14px] font-medium"
-              style={{ fontFamily: 'var(--font-inter)' }}
+              className="font-anton text-white text-[22px] tracking-wide leading-none"
+              style={{ fontFamily: 'var(--font-anton)' }}
             >
-              Wander far, belong everywhere.
+              FERNWEH
             </p>
             <p
-              className="text-white/50 text-[12px] max-w-[320px] mt-1"
+              className="text-[#c8e6d0] text-[12px] mt-1"
               style={{ fontFamily: 'var(--font-inter)' }}
             >
-              Discover Pakistan&apos;s trails with trusted operators.
+              Wander far, belong everywhere
             </p>
           </div>
 
-          {/* Right link columns */}
-          <div className="md:col-span-7 grid grid-cols-3 gap-6">
-            {footerColumns.map((col) => (
-              <div key={col.heading} className="flex flex-col gap-4">
-                <span
-                  className="text-white text-[14px] font-bold uppercase tracking-wider"
-                  style={{ fontFamily: 'var(--font-inter)' }}
-                >
-                  {col.heading}
-                </span>
-                <ul className="flex flex-col gap-2.5">
-                  {col.links.map((link) => (
-                    <li key={link.name}>
-                      <a
-                        href={link.href}
-                        className="text-white/60 hover:text-white transition-colors text-[13px]"
-                        style={{ fontFamily: 'var(--font-inter)' }}
-                      >
-                        {link.name}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          {/* Google Play badge — pushed to far right */}
+          <div className="ml-auto">
+            <Image src="/assets/google-play.svg" alt="Get it on Google Play" width={140} height={48} className="object-contain" />
           </div>
         </div>
 
-        {/* Bottom row */}
-        <div className="pt-8 border-t border-white/10 flex flex-col md:flex-row items-center justify-between gap-4">
-          <p
-            className="text-white/40 text-[12px]"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            &copy; 2026 Fernweh Travels. All rights reserved.
-          </p>
+        {/* Links grid */}
+        <div className="flex gap-[220px]">
+          {footerLinks.map((col) => (
+            <div key={col.heading}>
+              <p
+                className="text-white text-[13px] font-semibold mb-4"
+                style={{ fontFamily: 'var(--font-inter)' }}
+              >
+                {col.heading}
+              </p>
+              {col.links.map((link) => (
+                <a
+                  key={link}
+                  href="#"
+                  className="block text-[#c8e6d0] text-[12px] mb-3 hover:text-white transition-colors"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  {link}
+                </a>
+              ))}
+            </div>
+          ))}
+        </div>
+
+        {/* Bottom bar */}
+        <div className="mt-auto pb-0">
+          <div className="w-full h-px bg-white/15 mb-6" />
+          <div className="flex justify-between items-center pb-8">
+            <p
+              className="text-[#b3c7ba] text-[11.5px]"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              © 2026 Fernweh Travels. All rights reserved.
+            </p>
+            <p
+              className="text-[#b3c7ba] text-[11.5px]"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              A product of The Map Ventures
+            </p>
+          </div>
         </div>
       </div>
     </footer>
