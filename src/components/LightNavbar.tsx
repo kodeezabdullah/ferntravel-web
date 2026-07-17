@@ -1,6 +1,15 @@
 import Link from 'next/link';
 
-const NAV_LINKS = [
+interface NavLink {
+  label: string;
+  href: string;
+}
+
+interface LightNavbarProps {
+  links?: NavLink[];
+}
+
+const DEFAULT_LINKS: NavLink[] = [
   { label: 'Home', href: '/home' },
   { label: 'Tours', href: '/tours' },
   { label: 'Operators', href: '/operators' },
@@ -8,7 +17,7 @@ const NAV_LINKS = [
   { label: 'Support', href: '#' },
 ];
 
-export default function LightNavbar() {
+export default function LightNavbar({ links = DEFAULT_LINKS }: LightNavbarProps) {
   return (
     <nav className="w-full bg-white/95 backdrop-blur-sm border-b border-[#ede8dc] sticky top-0 z-50">
       <div className="max-w-[1200px] mx-auto px-6 md:px-12 h-[68px] flex items-center justify-between gap-8">
@@ -23,7 +32,7 @@ export default function LightNavbar() {
 
         {/* Center Nav Links */}
         <div className="hidden md:flex items-center gap-8">
-          {NAV_LINKS.map((link) => (
+          {links.map((link) => (
             <Link
               key={link.label}
               href={link.href}
