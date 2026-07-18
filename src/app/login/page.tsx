@@ -145,7 +145,7 @@ export default function LoginPage() {
         <button
           id="login-submit"
           type="button"
-          onClick={() => router.push('/')}
+          onClick={() => router.push('/home')}
           className="w-full rounded-full py-3 text-[15px] font-bold transition-all duration-150 hover:brightness-105 active:scale-[0.98]"
           style={{
             background: '#f2a93b',
@@ -162,7 +162,7 @@ export default function LoginPage() {
         <button
           id="login-google"
           type="button"
-          onClick={() => router.push('/')}
+          onClick={() => router.push('/home')}
           className="w-full rounded-full py-3 text-[14px] font-medium flex items-center justify-center gap-3 transition-all duration-150 hover:bg-white/10 active:scale-[0.98]"
           style={{
             background: 'transparent',

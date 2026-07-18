@@ -69,7 +69,7 @@ export default function Navbar({ triggerEntrance }: NavbarProps) {
 
       {/* CTA */}
       <a
-        href="#"
+        href="login"
         className="bg-white rounded-full px-6 py-2.5 text-[11.5px] font-semibold text-[#1b7a3d] hover:bg-[#f0fdf4] transition-colors whitespace-nowrap"
         style={{ fontFamily: 'var(--font-inter)' }}
       >

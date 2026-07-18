@@ -4,13 +4,13 @@ import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
-import Navbar from './Navbar';
+import HomeNavbar from './HomeNavbar';
 import SearchFilterBar from './SearchFilterBar';
 
 export default function HeroSection() {
   const heroRef = useRef<HTMLElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  
+
   const [navVisible, setNavVisible] = useState(false);
   const [barVisible, setBarVisible] = useState(false);
 
@@ -24,8 +24,7 @@ export default function HeroSection() {
     const startAnim = () => {
       setTimeout(() => {
         if (!containerRef.current) return;
-        
-        // Fade up the text content sequentially
+
         gsap.to(containerRef.current.children, {
           opacity: 1,
           y: 0,
@@ -40,8 +39,7 @@ export default function HeroSection() {
       }, 300);
     };
 
-    window.addEventListener('fernweh:loaded', startAnim, { once: true });
-    return () => window.removeEventListener('fernweh:loaded', startAnim);
+    startAnim();
   }, []);
 
   return (
@@ -66,10 +64,10 @@ export default function HeroSection() {
       />
 
       {/* Navbar */}
-      <Navbar triggerEntrance={navVisible} />
+      <HomeNavbar triggerEntrance={navVisible} />
 
       {/* Hero copy */}
-      <div 
+      <div
         ref={containerRef}
         className="absolute inset-0 z-20 flex flex-col items-center justify-center text-center px-4"
       >
