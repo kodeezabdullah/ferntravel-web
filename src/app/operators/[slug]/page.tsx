@@ -190,6 +190,8 @@ export default function OperatorDetailPage({
 }) {
   const { slug } = use(params);
   const operator = OPERATORS[slug];
+  const allImages = [operator.heroImage, ...operator.galleryImages];
+  const [selectedImage, setSelectedImage] = useState(allImages[0]);
 
   if (!operator) {
     return (
@@ -265,7 +267,7 @@ export default function OperatorDetailPage({
             <div>
               <div className="relative w-full h-[360px] md:h-[440px] rounded-2xl overflow-hidden mb-3">
                 <Image
-                  src={operator.heroImage}
+                  src={selectedImage}
                   alt={operator.name}
                   fill
                   className="object-cover"
@@ -274,10 +276,15 @@ export default function OperatorDetailPage({
                 />
               </div>
               <div className="grid grid-cols-3 gap-3">
-                {operator.galleryImages.map((img, i) => (
-                  <div
+                {allImages.map((img, i) => (
+                  <button
                     key={i}
-                    className="relative h-[110px] rounded-xl overflow-hidden"
+                    type="button"
+                    onClick={() => setSelectedImage(img)}
+                    className={`relative h-[110px] rounded-xl overflow-hidden cursor-pointer ${selectedImage === img
+                      ? 'ring-3 ring-[#1b7a3d] ring-offset-2'
+                      : ''
+                      }`}
                   >
                     <Image
                       src={img}
@@ -286,7 +293,7 @@ export default function OperatorDetailPage({
                       className="object-cover hover:scale-105 transition-transform duration-300"
                       unoptimized
                     />
-                  </div>
+                  </button>
                 ))}
               </div>
             </div>
