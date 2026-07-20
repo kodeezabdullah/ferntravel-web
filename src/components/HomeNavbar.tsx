@@ -2,21 +2,19 @@
 
 import { useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
 
 interface NavbarProps {
-  /** When true the nav plays its entrance (called by HeroSection after all text animations) */
   triggerEntrance?: boolean;
 }
 
-// Exported so HeroSection can imperatively animate it via a forwarded ref pattern
-export default function Navbar({ triggerEntrance }: NavbarProps) {
+export default function HomeNavbar({ triggerEntrance }: NavbarProps) {
   const navRef = useRef<HTMLElement>(null);
 
   useGSAP(() => {
     if (!navRef.current) return;
-    // Start hidden — hero timeline will animate this in
     gsap.set(navRef.current, { opacity: 0, y: -40 });
   }, []);
 
@@ -30,13 +28,20 @@ export default function Navbar({ triggerEntrance }: NavbarProps) {
     });
   }, [triggerEntrance]);
 
+  const navLinks = [
+    { label: 'Home', href: '/home' },
+    { label: 'Tours', href: '/tours' },
+    { label: 'Operators', href: '/operators' },
+    { label: 'About Us', href: '#' },
+    { label: 'Support', href: '#' },
+  ];
+
   return (
     <nav
       ref={navRef}
       className="fixed top-0 left-0 right-0 z-50 flex items-center justify-between px-[76px] h-[72px]"
       style={{ background: 'transparent' }}
     >
-      {/* Logo + wordmark */}
       <div className="flex items-center gap-3">
         <Image
           src="/assets/logo-nav.png"
@@ -53,31 +58,31 @@ export default function Navbar({ triggerEntrance }: NavbarProps) {
         </span>
       </div>
 
-      {/* Links */}
       <div className="flex items-center gap-[48px]">
-        {['Home', 'Tours', 'Operators', 'About Us', 'Support'].map((link) => (
-          <a
-            key={link}
-            href="#"
-            className="text-[14px] font-medium text-white/90 hover:text-white transition-colors"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            {link}
-          </a>
-        ))}
+        {navLinks.map((item) => {
+          return (
+            <Link
+              key={item.label}
+              href={item.href}
+              className="text-[14px] font-medium text-white/90 hover:text-white transition-colors"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              {item.label}
+            </Link>
+          );
+        })}
       </div>
 
-      {/* CTA + Account Profile */}
       <div className="flex items-center gap-4">
-        <a
-          href="#"
+        <Link
+          href="/tours"
           className="bg-white rounded-full px-6 py-2.5 text-[12px] font-bold text-[#1b7a3d] hover:bg-[#f0fdf4] transition-colors whitespace-nowrap"
           style={{ fontFamily: 'var(--font-inter)' }}
         >
           Book Now
-        </a>
-        <button
-          type="button"
+        </Link>
+        <Link
+          href="/settings"
           aria-label="Account profile"
           className="w-10 h-10 bg-white hover:bg-white/90 transition-colors rounded-full flex items-center justify-center text-[#1b7a3d] cursor-pointer"
         >
@@ -94,7 +99,7 @@ export default function Navbar({ triggerEntrance }: NavbarProps) {
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-        </button>
+        </Link>
       </div>
     </nav>
   );

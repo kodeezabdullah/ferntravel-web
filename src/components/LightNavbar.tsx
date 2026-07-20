@@ -45,8 +45,8 @@ export default function LightNavbar({ links = DEFAULT_LINKS }: LightNavbarProps)
         </div>
 
         {/* Account Icon */}
-        <button
-          type="button"
+        <Link
+          href="/settings"
           aria-label="Account profile"
           className="w-10 h-10 bg-[#1b7a3d] hover:bg-[#155f30] transition-colors rounded-full flex items-center justify-center text-white cursor-pointer flex-shrink-0"
         >
@@ -63,7 +63,7 @@ export default function LightNavbar({ links = DEFAULT_LINKS }: LightNavbarProps)
             <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
             <circle cx="12" cy="7" r="4" />
           </svg>
-        </button>
+        </Link>
       </div>
     </nav>
   );

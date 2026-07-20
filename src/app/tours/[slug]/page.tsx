@@ -2,6 +2,7 @@
 
 import { useState, use } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import LightNavbar from '@/components/LightNavbar';
 import HomeFooter from '@/components/HomeFooter';
 
@@ -139,7 +140,7 @@ const TOUR_NAV_LINKS = [
   { label: 'Tours', href: '/tours' },
   { label: 'Operators', href: '/operators' },
   { label: 'Explore Map', href: '#' },
-  { label: 'My Bookings', href: '#' },
+  { label: 'My Bookings', href: '/my-bookings' },
 ];
 
 /* ─── FAQ Accordion ─────────────────────────────────── */
@@ -575,13 +576,15 @@ export default function TourDetailPage({
                 </div>
 
                 {/* Book button */}
-                <button
-                  type="button"
-                  className="w-full bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white font-bold text-[14px] rounded-full py-3.5 cursor-pointer"
-                  style={{ fontFamily: 'var(--font-inter)' }}
-                >
-                  Book This Experience
-                </button>
+                <Link href="/my-bookings" className="w-full block">
+                  <button
+                    type="button"
+                    className="w-full bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white font-bold text-[14px] rounded-full py-3.5 cursor-pointer"
+                    style={{ fontFamily: 'var(--font-inter)' }}
+                  >
+                    Book This Experience
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

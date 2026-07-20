@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import LightNavbar from '@/components/LightNavbar';
 import HomeFooter from '@/components/HomeFooter';
 
@@ -150,20 +151,24 @@ export default function MyBookingsPage() {
                                 </span>
 
                                 <div className="flex items-center gap-4">
-                                    <button
-                                        type="button"
-                                        className="flex items-center gap-1.5 text-[#3d3229] text-[14px] font-medium cursor-pointer hover:text-[#1b7a3d] transition-colors"
-                                        style={{ fontFamily: 'var(--font-inter)' }}
-                                    >
-                                        💬 Message
-                                    </button>
-                                    <button
-                                        type="button"
-                                        className="bg-[#1b7a3d] hover:bg-[#146030] transition-colors text-white font-bold text-[14px] rounded-full px-6 py-2.5 cursor-pointer"
-                                        style={{ fontFamily: 'var(--font-inter)' }}
-                                    >
-                                        View Details
-                                    </button>
+                                    <Link href="/chat">
+                                        <button
+                                            type="button"
+                                            className="flex items-center gap-1.5 text-[#3d3229] text-[14px] font-medium cursor-pointer hover:text-[#1b7a3d] transition-colors"
+                                            style={{ fontFamily: 'var(--font-inter)' }}
+                                        >
+                                            💬 Message
+                                        </button>
+                                    </Link>
+                                    <Link href="/tours/fairy-meadows-3-day-trek">
+                                        <button
+                                            type="button"
+                                            className="bg-[#1b7a3d] hover:bg-[#146030] transition-colors text-white font-bold text-[14px] rounded-full px-6 py-2.5 cursor-pointer"
+                                            style={{ fontFamily: 'var(--font-inter)' }}
+                                        >
+                                            View Details
+                                        </button>
+                                    </Link>
                                 </div>
                             </div>
                         </div>

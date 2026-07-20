@@ -55,21 +55,25 @@ export default function Navbar({ triggerEntrance }: NavbarProps) {
 
       {/* Links */}
       <div className="flex items-center gap-[48px]">
-        {['Destinations', 'Operators', 'How It Works'].map((link) => (
+        {[
+          { label: 'Destinations', href: '#' },
+          { label: 'Operators', href: '/operators' },
+          { label: 'How It Works', href: '#' },
+        ].map((link) => (
           <a
-            key={link}
-            href="#"
+            key={link.label}
+            href={link.href}
             className="text-[14px] font-medium text-white/90 hover:text-white transition-colors"
             style={{ fontFamily: 'var(--font-inter)' }}
           >
-            {link}
+            {link.label}
           </a>
         ))}
       </div>
 
       {/* CTA */}
       <a
-        href="login"
+        href="/login"
         className="bg-white rounded-full px-6 py-2.5 text-[11.5px] font-semibold text-[#1b7a3d] hover:bg-[#f0fdf4] transition-colors whitespace-nowrap"
         style={{ fontFamily: 'var(--font-inter)' }}
       >

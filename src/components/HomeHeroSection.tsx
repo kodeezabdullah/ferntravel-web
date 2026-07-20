@@ -4,6 +4,7 @@ import { useRef, useState, useEffect } from 'react';
 import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import Link from 'next/link';
 import HomeNavbar from './HomeNavbar';
 import SearchFilterBar from './SearchFilterBar';
 
@@ -98,13 +99,13 @@ export default function HeroSection() {
         </p>
 
         {/* View Tours button */}
-        <button
-          type="button"
-          className="bg-white text-[#1b7a3d] hover:bg-[#f0fdf4] transition-colors rounded-full px-8 py-3.5 text-[14px] font-bold shadow-lg cursor-pointer"
+        <Link
+          href="/tours"
+          className="bg-white text-[#1b7a3d] hover:bg-[#f0fdf4] transition-colors rounded-full px-8 py-3.5 text-[14px] font-bold shadow-lg cursor-pointer inline-block text-center"
           style={{ fontFamily: 'var(--font-inter)' }}
         >
           View Tours
-        </button>
+        </Link>
       </div>
 
       {/* Search Filter Bar */}

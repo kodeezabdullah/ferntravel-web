@@ -1,4 +1,5 @@
 'use client';
+import Link from 'next/link';
 
 interface Operator {
   id: number;
@@ -37,8 +38,9 @@ export default function OperatorsSection() {
         {/* Operators Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
           {OPERATORS_DATA.map((op) => (
-            <div
+            <Link
               key={op.id}
+              href="/operators/northern-trails-co"
               className="bg-white rounded-[20px] p-6 border border-[#ede8dc] hover:-translate-y-1.5 hover:shadow-[0px_20px_40px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col justify-between h-full cursor-pointer"
             >
               <div>
@@ -94,7 +96,7 @@ export default function OperatorsSection() {
               >
                 View Profile &rarr;
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>

@@ -1,6 +1,9 @@
 'use client';
 
+import { useRef, useEffect } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import gsap from 'gsap';
 import { Tour } from './DestinationTourRow';
 
 interface OperatorTourRowProps {
@@ -8,6 +11,7 @@ interface OperatorTourRowProps {
   tourCount: number;
   rating: number;
   tours: Tour[];
+  profileHref?: string;
 }
 
 export default function OperatorTourRow({
@@ -15,9 +19,37 @@ export default function OperatorTourRow({
   tourCount,
   rating,
   tours,
+  profileHref,
 }: OperatorTourRowProps) {
+  const rowRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!rowRef.current) return;
+    const el = rowRef.current;
+
+    gsap.set(el, { opacity: 0, y: 24 });
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          gsap.to(el, {
+            opacity: 1,
+            y: 0,
+            duration: 0.6,
+            ease: 'power2.out',
+          });
+          observer.unobserve(el);
+        }
+      },
+      { threshold: 0.15 }
+    );
+
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <div className="w-full mb-16 relative">
+    <div ref={rowRef} className="w-full mb-16 relative">
       <style
         dangerouslySetInnerHTML={{
           __html: `
@@ -35,7 +67,6 @@ export default function OperatorTourRow({
       {/* Row Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-4">
-          {/* Circular dark green avatar with white person icon */}
           <div className="w-12 h-12 rounded-full bg-[#1b7a3d] text-white flex items-center justify-center flex-shrink-0">
             <svg
               width="20"
@@ -74,24 +105,21 @@ export default function OperatorTourRow({
           </div>
         </div>
 
-        {/* View Profile Link */}
-        <a
-          href="#"
+        <Link
+          href={profileHref || "/operators/northern-trails-co"}
           className="text-[#1b7a3d] font-bold text-[14px] hover:opacity-85 transition-opacity"
           style={{ fontFamily: 'var(--font-inter)' }}
         >
           View Profile &rarr;
-        </a>
+        </Link>
       </div>
 
-      {/* Horizontal Carousel */}
       <div className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none py-2 px-1">
         {tours.map((tour, idx) => (
           <div
             key={idx}
             className="flex-shrink-0 w-[280px] md:w-[350px] h-[380px] rounded-2xl overflow-hidden relative group cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 border border-[#ede8dc]/40"
           >
-            {/* Background image */}
             <Image
               src={tour.image}
               alt={tour.name}
@@ -101,10 +129,8 @@ export default function OperatorTourRow({
               unoptimized
             />
 
-            {/* Subtle gradient just for the glass panel to sit on */}
             <div className="absolute bottom-0 inset-x-0 h-[55%] bg-gradient-to-t from-black/30 to-transparent z-10" />
 
-            {/* Rating pill top-left */}
             <div
               className="absolute top-4 left-4 bg-white/95 backdrop-blur-[4px] rounded-full px-2.5 py-1 flex items-center gap-1 shadow-sm font-bold text-[12px] text-[#3d3229] z-20"
               style={{ fontFamily: 'var(--font-inter)' }}
@@ -113,7 +139,6 @@ export default function OperatorTourRow({
               <span>{tour.rating}</span>
             </div>
 
-            {/* Bottom Content */}
             <div className="absolute bottom-0 inset-x-0 h-[52%] p-6 z-20 flex flex-col justify-end bg-white/10 backdrop-blur-md border-t border-white/20">
               <h4
                 className="text-[17px] md:text-[19px] font-bold text-white mb-1.5 leading-snug"
@@ -128,7 +153,6 @@ export default function OperatorTourRow({
                 {tour.duration} &middot; PKR {tour.price}
               </p>
 
-              {/* Date with calendar icon */}
               <div className="flex items-center gap-1.5 text-[12px] text-[#f2a93b] font-bold">
                 <svg
                   width="13"
@@ -148,14 +172,15 @@ export default function OperatorTourRow({
                 <span style={{ fontFamily: 'var(--font-inter)' }}>{tour.date}</span>
               </div>
 
-              {/* Book Now Button */}
-              <button
-                type="button"
-                className="w-full border border-white/35 bg-white/10 hover:bg-white/20 transition-all rounded-full py-2.5 text-[13.5px] font-bold text-white text-center mt-4 cursor-pointer"
-                style={{ fontFamily: 'var(--font-inter)' }}
-              >
-                Book Now
-              </button>
+              <Link href="/tours/fairy-meadows-3-day-trek" className="w-full block mt-4">
+                <button
+                  type="button"
+                  className="w-full border border-white/35 bg-white/10 hover:bg-white/20 transition-all rounded-full py-2.5 text-[13.5px] font-bold text-white text-center cursor-pointer"
+                  style={{ fontFamily: 'var(--font-inter)' }}
+                >
+                  Book Now
+                </button>
+              </Link>
             </div>
           </div>
         ))}

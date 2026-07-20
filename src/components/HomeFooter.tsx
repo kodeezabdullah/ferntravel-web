@@ -4,8 +4,8 @@ const footerColumns = [
   {
     heading: 'Explore',
     links: [
-      { name: 'Tours', href: '#' },
-      { name: 'Operators', href: '#' },
+      { name: 'Tours', href: '/tours' },
+      { name: 'Operators', href: '/operators' },
       { name: 'Explore Map', href: '#' },
     ],
   },
@@ -20,7 +20,7 @@ const footerColumns = [
   {
     heading: 'Legal',
     links: [
-      { name: 'Terms & Privacy', href: '#' },
+      { name: 'Terms & Privacy', href: '/privacy-policy' },
       { name: 'Cancellation Policy', href: '#' },
     ],
   },

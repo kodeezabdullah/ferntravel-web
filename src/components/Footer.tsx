@@ -19,6 +19,13 @@ const footerLinks = [
   },
 ];
 
+const LINK_HREFS: Record<string, string> = {
+  'Register as Operator': '/signup',
+  'Operator Login': '/login',
+  'Tours': '/tours',
+  'Operators': '/operators',
+};
+
 export default function Footer() {
   return (
     <footer className="relative w-full h-[460px] overflow-hidden">
@@ -73,7 +80,7 @@ export default function Footer() {
               {col.links.map((link) => (
                 <a
                   key={link}
-                  href="#"
+                  href={LINK_HREFS[link] || '#'}
                   className="block text-[#c8e6d0] text-[12px] mb-3 hover:text-white transition-colors"
                   style={{ fontFamily: 'var(--font-inter)' }}
                 >

@@ -190,6 +190,7 @@ export default function OperatorsPage() {
           tourCount={24}
           rating={4.9}
           tours={NORTHERN_TOURS}
+          profileHref="/operators/northern-trails-co"
         />
 
         <OperatorTourRow
@@ -197,6 +198,7 @@ export default function OperatorsPage() {
           tourCount={18}
           rating={4.8}
           tours={KARAKORAM_TOURS}
+          profileHref="/operators/northern-trails-co"
         />
 
         <OperatorTourRow
@@ -204,6 +206,7 @@ export default function OperatorsPage() {
           tourCount={31}
           rating={4.9}
           tours={SUMMIT_TOURS}
+          profileHref="/operators/northern-trails-co"
         />
 
         <OperatorTourRow
@@ -211,6 +214,7 @@ export default function OperatorsPage() {
           tourCount={12}
           rating={4.7}
           tours={WILD_VALLEY_TOURS}
+          profileHref="/operators/northern-trails-co"
         />
 
         {/* See More Button */}

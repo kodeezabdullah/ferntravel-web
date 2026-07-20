@@ -2,6 +2,7 @@
 
 import { useState, use } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 import LightNavbar from '@/components/LightNavbar';
 import HomeFooter from '@/components/HomeFooter';
 
@@ -515,13 +516,15 @@ export default function OperatorDetailPage({
 
               {/* Message button */}
               <div className="p-6 pt-4">
-                <button
-                  type="button"
-                  className="w-full bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white font-bold text-[14px] rounded-full py-3.5 cursor-pointer"
-                  style={{ fontFamily: 'var(--font-inter)' }}
-                >
-                  Message Operator
-                </button>
+                <Link href="/chat" className="w-full block">
+                  <button
+                    type="button"
+                    className="w-full bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white font-bold text-[14px] rounded-full py-3.5 cursor-pointer"
+                    style={{ fontFamily: 'var(--font-inter)' }}
+                  >
+                    Message Operator
+                  </button>
+                </Link>
               </div>
             </div>
           </div>

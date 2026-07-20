@@ -2,6 +2,7 @@
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
 
 interface Tour {
   id: number;
@@ -110,11 +111,10 @@ export default function ToursSection() {
                 key={cat}
                 type="button"
                 onClick={() => setActiveCategory(cat)}
-                className={`rounded-full px-5 py-2 text-[14px] font-semibold transition-all duration-200 cursor-pointer border ${
-                  active
-                    ? 'bg-[#1b7a3d] border-[#1b7a3d] text-white shadow-sm'
-                    : 'bg-white border-[#ede8dc] text-[#3d3229] hover:bg-white/80'
-                }`}
+                className={`rounded-full px-5 py-2 text-[14px] font-semibold transition-all duration-200 cursor-pointer border ${active
+                  ? 'bg-[#1b7a3d] border-[#1b7a3d] text-white shadow-sm'
+                  : 'bg-white border-[#ede8dc] text-[#3d3229] hover:bg-white/80'
+                  }`}
                 style={{ fontFamily: 'var(--font-inter)' }}
               >
                 {cat}
@@ -183,8 +183,9 @@ export default function ToursSection() {
             className="flex gap-8 overflow-x-auto scroll-smooth scrollbar-none py-4 px-2"
           >
             {TOURS_DATA.map((tour) => (
-              <div
+              <Link
                 key={tour.id}
+                href="/tours/fairy-meadows-3-day-trek"
                 className="flex-shrink-0 w-[280px] md:w-[370px] bg-white rounded-[20px] overflow-hidden border border-[#ede8dc] hover:-translate-y-1.5 hover:shadow-[0px_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col h-full group cursor-pointer"
               >
                 {/* Cover Photo */}
@@ -246,7 +247,7 @@ export default function ToursSection() {
                     </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </div>
