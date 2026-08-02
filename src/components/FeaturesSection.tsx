@@ -96,15 +96,15 @@ export default function FeaturesSection() {
   };
 
   return (
-    <section ref={sectionRef} className="w-full bg-[#0f4d28] py-16 px-[80px]">
+    <section ref={sectionRef} className="w-full bg-[#0f4d28] py-12 md:py-16 px-6 md:px-[80px]">
       <h2
-        className="font-anton text-white text-[34px] mb-10 tracking-wide"
+        className="font-anton text-white text-[28px] md:text-[34px] mb-8 md:mb-10 tracking-wide text-center md:text-left"
         style={{ fontFamily: 'var(--font-anton)' }}
       >
         WHY FERNWEH
       </h2>
 
-      <div className="flex gap-7 justify-center items-center">
+      <div className="flex flex-col md:flex-row gap-6 md:gap-7 justify-center items-center">
         {cards.map((card, i) => {
           const isHovered = hoveredIdx === i;
 
@@ -112,10 +112,8 @@ export default function FeaturesSection() {
             <div
               key={card.num}
               ref={(el) => { cardRefs.current[i] = el; }}
-              className="feature-card relative overflow-hidden rounded-[10px] cursor-pointer flex-shrink-0"
+              className="feature-card relative overflow-hidden rounded-[10px] cursor-pointer w-full max-w-[340px] md:max-w-none md:w-[280px] h-[360px] md:h-[400px] flex-shrink-0"
               style={{
-                width: '280px',
-                height: '400px',
                 background: '#c7e0cf',
                 transformOrigin: 'center center',
                 willChange: 'transform, opacity',
@@ -148,10 +146,9 @@ export default function FeaturesSection() {
                 />
               </div>
 
-              {/* Text — locked to left 40% so it never touches the circle */}
+              {/* Text */}
               <div
-                className="absolute inset-0 z-10 flex flex-col justify-between p-6"
-                style={{ width: '40%' }}
+                className="absolute inset-0 z-10 flex flex-col justify-between p-6 w-[55%] md:w-[40%]"
               >
                 {/* Number */}
                 <p

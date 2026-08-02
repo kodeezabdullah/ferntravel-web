@@ -35,10 +35,11 @@ function Avatar() {
 export default function ChatPage() {
     const [activeFilter, setActiveFilter] = useState('All');
     const [message, setMessage] = useState('');
+    const [activeView, setActiveView] = useState<'list' | 'thread'>('list');
 
     return (
         <main className="h-screen flex flex-col bg-white">
-            <div className="flex items-center justify-between px-8 py-4 border-b border-[#ede8dc] shrink-0">
+            <div className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-[#ede8dc] shrink-0">
                 <h1 className="text-[22px] font-bold text-[#1b7a3d]" style={{ fontFamily: 'var(--font-poppins)' }}>
                     Fernweh
                 </h1>
@@ -48,7 +49,8 @@ export default function ChatPage() {
             </div>
 
             <div className="flex flex-1 overflow-hidden">
-                <div className="w-[380px] border-r border-[#ede8dc] flex flex-col shrink-0">
+                {/* Conversation List Sidebar */}
+                <div className={`w-full md:w-[380px] border-r border-[#ede8dc] flex-col shrink-0 ${activeView === 'list' ? 'flex' : 'hidden md:flex'}`}>
                     <div className="flex items-center justify-between px-6 pt-6 pb-4">
                         <h2 className="text-[24px] font-bold text-[#3d3229]" style={{ fontFamily: 'var(--font-poppins)' }}>
                             Messages
@@ -80,7 +82,11 @@ export default function ChatPage() {
 
                     <div className="flex-1 overflow-y-auto">
                         {CONVERSATIONS.map((c, i) => (
-                            <div key={c.name} className={`flex items-start gap-3 px-6 py-3.5 border-b border-[#f5f1e8] cursor-pointer ${i === 0 ? 'bg-[#e8f2ec]' : 'hover:bg-[#faf7f2]'}`}>
+                            <div
+                                key={c.name}
+                                onClick={() => setActiveView('thread')}
+                                className={`flex items-start gap-3 px-6 py-3.5 border-b border-[#f5f1e8] cursor-pointer ${i === 0 ? 'bg-[#e8f2ec]' : 'hover:bg-[#faf7f2]'}`}
+                            >
                                 <div className="relative">
                                     <Avatar />
                                     {c.online && <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#1b7a3d] border-2 border-white rounded-full" />}
@@ -106,26 +112,37 @@ export default function ChatPage() {
                     </div>
                 </div>
 
-                <div className="flex-1 flex flex-col relative">
-                    <div className="flex items-center justify-between px-8 py-4 border-b border-[#ede8dc] shrink-0">
+                {/* Chat Thread Panel */}
+                <div className={`flex-1 flex-col relative ${activeView === 'thread' ? 'flex w-full' : 'hidden md:flex'}`}>
+                    <div className="flex items-center justify-between px-4 md:px-8 py-4 border-b border-[#ede8dc] shrink-0">
                         <div className="flex items-center gap-3">
+                            <button
+                                type="button"
+                                onClick={() => setActiveView('list')}
+                                aria-label="Back to conversations"
+                                className="md:hidden text-[#3d3229] hover:text-[#1b7a3d] transition-colors p-1 cursor-pointer"
+                            >
+                                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                                    <path d="M19 12H5M12 19l-7-7 7-7" />
+                                </svg>
+                            </button>
                             <div className="relative">
                                 <Avatar />
                                 <span className="absolute bottom-0 right-0 w-3 h-3 bg-[#1b7a3d] border-2 border-white rounded-full" />
                             </div>
                             <div>
-                                <h3 className="font-bold text-[#3d3229] text-[17px]" style={{ fontFamily: 'var(--font-poppins)' }}>
+                                <h3 className="font-bold text-[#3d3229] text-[16px] md:text-[17px]" style={{ fontFamily: 'var(--font-poppins)' }}>
                                     Northern Trails Co.
                                 </h3>
-                                <p className="text-[13px] text-[#1b7a3d]" style={{ fontFamily: 'var(--font-inter)' }}>
+                                <p className="text-[12px] md:text-[13px] text-[#1b7a3d]" style={{ fontFamily: 'var(--font-inter)' }}>
                                     Online &middot; Fairy Meadows 3-Day Trek
                                 </p>
                             </div>
                         </div>
-                        <div className="flex gap-3">
+                        <div className="flex gap-2 md:gap-3">
                             {['call', 'video', 'info'].map((icon) => (
-                                <button key={icon} type="button" className="w-10 h-10 rounded-full bg-[#f5f1e8] flex items-center justify-center cursor-pointer hover:bg-[#ede8dc] transition-colors">
-                                    <span className="text-[16px]">{icon === 'call' ? '📞' : icon === 'video' ? '🎥' : 'ℹ️'}</span>
+                                <button key={icon} type="button" className="w-9 h-9 md:w-10 md:h-10 rounded-full bg-[#f5f1e8] flex items-center justify-center cursor-pointer hover:bg-[#ede8dc] transition-colors">
+                                    <span className="text-[15px] md:text-[16px]">{icon === 'call' ? '📞' : icon === 'video' ? '🎥' : 'ℹ️'}</span>
                                 </button>
                             ))}
                         </div>
@@ -137,7 +154,7 @@ export default function ChatPage() {
                         </span>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto px-8 py-6 flex flex-col gap-4 z-10 relative">
+                    <div className="flex-1 overflow-y-auto px-4 md:px-8 py-6 flex flex-col gap-4 z-10 relative">
                         <div className="text-center text-[13px] text-[#8a8a85] my-2" style={{ fontFamily: 'var(--font-inter)' }}>
                             Today
                         </div>
@@ -184,7 +201,7 @@ export default function ChatPage() {
                         </MessageBubble>
                     </div>
 
-                    <div className="flex items-center gap-3 px-8 py-4 border-t border-[#ede8dc] shrink-0 z-10">
+                    <div className="flex items-center gap-2 md:gap-3 px-4 md:px-8 py-4 border-t border-[#ede8dc] shrink-0 z-10">
                         <button type="button" className="text-[20px] cursor-pointer">📎</button>
                         <div className="flex-1 flex items-center bg-[#f5f1e8] border border-[#ede8dc] rounded-full px-4">
                             <span className="text-[18px] mr-2">🙂</span>
@@ -193,11 +210,11 @@ export default function ChatPage() {
                                 value={message}
                                 onChange={(e) => setMessage(e.target.value)}
                                 placeholder="Type a message..."
-                                className="flex-1 bg-transparent py-3 text-[15px] outline-none"
+                                className="flex-1 bg-transparent py-3 text-[14px] md:text-[15px] outline-none"
                                 style={{ fontFamily: 'var(--font-inter)' }}
                             />
                         </div>
-                        <button type="button" className="w-11 h-11 rounded-full bg-[#1b7a3d] flex items-center justify-center cursor-pointer hover:bg-[#146030] transition-colors">
+                        <button type="button" className="w-10 h-10 md:w-11 md:h-11 rounded-full bg-[#1b7a3d] flex items-center justify-center cursor-pointer hover:bg-[#146030] transition-colors shrink-0">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="white">
                                 <path d="M2 21l21-9L2 3v7l15 2-15 2z" />
                             </svg>

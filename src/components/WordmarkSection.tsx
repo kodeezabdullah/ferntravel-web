@@ -60,24 +60,24 @@ export default function WordmarkSection() {
       <div className="absolute inset-0 bg-black/35 z-10" />
 
       {/* Content */}
-      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center">
+      <div className="absolute inset-0 z-20 flex flex-col items-center justify-center px-4">
         {/* Subtitle — slides in from top */}
         <p
           ref={sublineRef}
-          className="font-alex-brush text-white text-[32px] leading-none mb-6 text-center"
+          className="font-alex-brush text-white text-[24px] sm:text-[28px] md:text-[32px] leading-none mb-6 text-center"
           style={{ fontFamily: 'var(--font-alex-brush)' }}
         >
           Your Northern Pakistan Specialist
         </p>
 
         {/* FERNWEH photo-clip letters — dims in slowly */}
-        <div ref={lettersRef} style={{ width: 580, height: 150 }}>
+        <div ref={lettersRef} className="w-full max-w-[320px] sm:max-w-[420px] md:max-w-[580px] h-[80px] sm:h-[110px] md:h-[150px] relative flex items-center justify-center">
           <Image
             src="/assets/fernweh-letters.png"
             alt="FERNWEH"
             width={580}
             height={150}
-            className="object-contain"
+            className="object-contain w-full h-full"
           />
         </div>
       </div>
