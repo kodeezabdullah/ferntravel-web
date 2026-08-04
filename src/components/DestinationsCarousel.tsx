@@ -120,30 +120,30 @@ export default function DestinationsCarousel() {
       </div>
 
       {/* Carousel */}
-      <div className="relative flex items-center max-w-[1440px] mx-auto px-[100px]">
+      <div className="relative flex items-center max-w-[1440px] mx-auto px-4 md:px-[100px]">
 
         {/* Prev arrow */}
         <button
           ref={prevRef}
           onClick={prev}
-          className="absolute left-8 z-10 w-11 h-11 rounded-full bg-white border border-[#ede8dc] shadow-sm hover:shadow-md hover:border-[#1b7a3d] transition-all flex items-center justify-center"
+          className="absolute left-2 md:left-8 z-10 w-9 h-9 md:w-11 md:h-11 rounded-full bg-white/90 backdrop-blur-sm border border-[#ede8dc] shadow-sm hover:shadow-md hover:border-[#1b7a3d] transition-all flex items-center justify-center top-1/2 -translate-y-1/2 cursor-pointer"
           style={{ opacity: 0 }}
         >
-          <span className="text-[#3d3229] text-[20px] leading-none select-none" style={{ marginTop: '-2px' }}>‹</span>
+          <span className="text-[#3d3229] text-[18px] md:text-[20px] leading-none select-none" style={{ marginTop: '-2px' }}>‹</span>
         </button>
 
         {/* Slide content */}
-        <div ref={slideRef} className="flex items-center w-full gap-16">
+        <div ref={slideRef} className="flex flex-col md:flex-row items-center w-full gap-6 md:gap-16 px-4 md:px-0">
 
           {/* Image — animates from left */}
           <div
             ref={imgRef}
-            className="relative w-[580px] h-[400px] flex-shrink-0 rounded-[8px] overflow-hidden"
+            className="relative w-full md:w-[580px] h-[240px] sm:h-[300px] md:h-[400px] flex-shrink-0 rounded-[8px] overflow-hidden"
             style={{ opacity: 0 }}
           >
-            <Image src={dest.image} alt={dest.name} fill className="object-cover" sizes="580px" priority={current === 0} />
+            <Image src={dest.image} alt={dest.name} fill className="object-cover" sizes="(max-width: 768px) 100vw, 580px" priority={current === 0} />
             <p
-              className="absolute bottom-0 left-2 font-poppins font-bold text-[90px] leading-none text-white/20 select-none pointer-events-none"
+              className="absolute bottom-0 left-2 font-poppins font-bold text-[50px] md:text-[90px] leading-none text-white/20 select-none pointer-events-none"
               style={{ fontFamily: 'var(--font-poppins)' }}
             >
               {dest.watermark}
@@ -151,14 +151,14 @@ export default function DestinationsCarousel() {
           </div>
 
           {/* Info panel — animates from right */}
-          <div ref={infoRef} className="flex-1" style={{ opacity: 0 }}>
+          <div ref={infoRef} className="w-full flex-1" style={{ opacity: 0 }}>
             <h3
-              className="font-poppins font-bold text-[#3d3229] text-[22px] mb-4"
+              className="font-poppins font-bold text-[#3d3229] text-[20px] md:text-[22px] mb-3 md:mb-4"
               style={{ fontFamily: 'var(--font-poppins)' }}
             >
               {dest.name}
             </h3>
-            <div className="flex items-center gap-6 mb-5">
+            <div className="flex flex-wrap items-center gap-4 md:gap-6 mb-4 md:mb-5">
               <div className="flex items-center gap-2">
                 <Image src="/assets/icon-duration.svg" alt="Duration" width={16} height={16} />
                 <span className="text-[12.5px] text-[#5d5d5a]" style={{ fontFamily: 'var(--font-inter)' }}>{dest.days}</span>
@@ -168,26 +168,26 @@ export default function DestinationsCarousel() {
                 <span className="text-[12.5px] text-[#5d5d5a]" style={{ fontFamily: 'var(--font-inter)' }}>{dest.region}</span>
               </div>
             </div>
-            <p className="text-[13px] font-semibold text-[#3d3229] mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
+            <p className="text-[13px] font-semibold text-[#3d3229] mb-1 md:mb-2" style={{ fontFamily: 'var(--font-inter)' }}>
               Destination:
             </p>
-            <p className="text-[12.5px] text-[#5d5d5a] leading-[1.6] mb-8 max-w-[500px]" style={{ fontFamily: 'var(--font-inter)' }}>
+            <p className="text-[12.5px] text-[#5d5d5a] leading-[1.6] mb-6 md:mb-8 max-w-[500px]" style={{ fontFamily: 'var(--font-inter)' }}>
               {dest.stops}
             </p>
 
             {/* Dots */}
-            <div className="flex gap-2 mb-8">
+            <div className="flex gap-2 mb-6 md:mb-8">
               {destinations.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => goTo(i)}
-                  className="rounded-full transition-all duration-300"
+                  className="rounded-full transition-all duration-300 cursor-pointer"
                   style={{ width: i === current ? 24 : 8, height: 8, background: i === current ? '#1b7a3d' : '#c8e6d0' }}
                 />
               ))}
             </div>
 
-            <button className="bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white text-[13px] font-semibold rounded-full px-8 h-12">
+            <button className="bg-[#1b7a3d] hover:bg-[#155f30] transition-colors text-white text-[13px] font-semibold rounded-full px-8 h-12 cursor-pointer">
               Explore in App
             </button>
           </div>
@@ -197,10 +197,10 @@ export default function DestinationsCarousel() {
         <button
           ref={nextRef}
           onClick={next}
-          className="absolute right-8 z-10 w-11 h-11 rounded-full bg-white border border-[#ede8dc] shadow-sm hover:shadow-md hover:border-[#1b7a3d] transition-all flex items-center justify-center"
+          className="absolute right-2 md:right-8 z-10 w-9 h-9 md:w-11 md:h-11 rounded-full bg-white/90 backdrop-blur-sm border border-[#ede8dc] shadow-sm hover:shadow-md hover:border-[#1b7a3d] transition-all flex items-center justify-center top-1/2 -translate-y-1/2 cursor-pointer"
           style={{ opacity: 0 }}
         >
-          <span className="text-[#3d3229] text-[20px] leading-none select-none" style={{ marginTop: '-2px' }}>›</span>
+          <span className="text-[#3d3229] text-[18px] md:text-[20px] leading-none select-none" style={{ marginTop: '-2px' }}>›</span>
         </button>
 
       </div>
