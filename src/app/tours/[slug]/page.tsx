@@ -233,16 +233,16 @@ export default function TourDetailPage({
                   {/* Vertical line */}
                   <div className="absolute left-[7px] top-2 bottom-2 w-px bg-[#c8e6d0]" />
                   <div className="flex flex-col gap-6">
-                    {tour.itinerary.map((stop, i) => (
-                      <div key={i} className="relative flex gap-6 items-start">
+                    {[...tour.itinerary].sort((a, b) => a.order - b.order).map((stop) => (
+                      <div key={stop.order} className="relative flex gap-6 items-start">
                         {/* Green dot */}
                         <div className="absolute left-[-13px] mt-1.5 w-3 h-3 rounded-full bg-[#1b7a3d] border-2 border-white shadow-sm flex-shrink-0" />
-                        {/* Time */}
+                        {/* Step number */}
                         <span
-                          className="text-[14px] font-bold text-[#1b7a3d] w-[60px] flex-shrink-0 pt-0.5"
+                          className="text-[14px] font-bold text-[#1b7a3d] w-[28px] flex-shrink-0 pt-0.5"
                           style={{ fontFamily: 'var(--font-inter)' }}
                         >
-                          {stop.time}
+                          {stop.order + 1}.
                         </span>
                         {/* Title + description */}
                         <div className="min-w-0">

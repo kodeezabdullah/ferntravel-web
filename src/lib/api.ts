@@ -70,6 +70,34 @@ export async function apiFetch<T = unknown>(
   return parseResponse(res) as Promise<T>;
 }
 
+// For non-JSON responses (e.g. CSV exports) where apiFetch's res.json() parsing doesn't apply.
+export async function apiFetchRaw(path: string, options: RequestInit = {}): Promise<Response> {
+  const authHeader = await getAuthHeader();
+  const url = `${API_BASE_URL}${path}`;
+  const baseHeaders = options.headers as Record<string, string> | undefined;
+  let res = await fetch(url, { ...options, headers: { ...authHeader, ...baseHeaders } });
+
+  if (res.status === 401) {
+    const { data, error } = await supabase.auth.refreshSession();
+    if (!error && data.session) {
+      res = await fetch(url, {
+        ...options,
+        headers: {
+          Authorization: `Bearer ${data.session.access_token}`,
+          ...baseHeaders,
+        },
+      });
+    }
+  }
+
+  if (!res.ok) {
+    const body = await res.json().catch(() => null);
+    throw new ApiError(res.status, body?.error?.code ?? 'UNKNOWN_ERROR', body?.error?.message ?? `Request failed with status ${res.status}`);
+  }
+
+  return res;
+}
+
 export async function apiUpload<T = unknown>(
   path: string,
   file: File,
