@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
@@ -79,11 +80,11 @@ export default function MobileSidebar({
     }
   }, [open, mounted]);
 
-  if (!mounted) return null;
+  if (!mounted || typeof document === 'undefined') return null;
 
   const isDark = variant === 'dark';
 
-  return (
+  return createPortal(
     <div className="md:hidden fixed inset-0 z-[100]">
       <div
         ref={backdropRef}
@@ -156,6 +157,7 @@ export default function MobileSidebar({
           </div>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }
