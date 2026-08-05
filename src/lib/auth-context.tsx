@@ -11,7 +11,11 @@ interface AuthContextValue {
   user: Profile | null;
   loading: boolean;
   signInWithPassword: (email: string, password: string) => Promise<void>;
-  signUpWithPassword: (email: string, password: string) => Promise<void>;
+  signUpWithPassword: (
+    email: string,
+    password: string,
+    metadata: { full_name: string; phone_number: string },
+  ) => Promise<void>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -64,10 +68,21 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     if (error) throw error;
   }, []);
 
-  const signUpWithPassword = useCallback(async (email: string, password: string) => {
-    const { error } = await supabase.auth.signUp({ email, password });
-    if (error) throw error;
-  }, []);
+  const signUpWithPassword = useCallback(
+    async (
+      email: string,
+      password: string,
+      metadata: { full_name: string; phone_number: string },
+    ) => {
+      const { error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: { data: metadata },
+      });
+      if (error) throw error;
+    },
+    [],
+  );
 
   const signInWithGoogle = useCallback(async () => {
     const { error } = await supabase.auth.signInWithOAuth({

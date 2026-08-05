@@ -8,7 +8,6 @@ import AuthCard from '@/components/auth/AuthCard';
 import RoleSwitcher from '@/components/auth/RoleSwitcher';
 import AuthInput from '@/components/auth/AuthInput';
 import { useAuth } from '@/lib/auth-context';
-import { apiFetch } from '@/lib/api';
 
 /* ── Eye icon SVGs ── */
 function EyeOpen() {
@@ -81,13 +80,9 @@ export default function SignupPage() {
 
     setSubmitting(true);
     try {
-      await signUpWithPassword(email, password);
-      await apiFetch('/auth/me', {
-        method: 'PATCH',
-        body: {
-          full_name: fullName || undefined,
-          phone_number: phone.trim(),
-        },
+      await signUpWithPassword(email, password, {
+        full_name: fullName.trim(),
+        phone_number: phone.trim(),
       });
       router.push('/home');
     } catch (err) {
