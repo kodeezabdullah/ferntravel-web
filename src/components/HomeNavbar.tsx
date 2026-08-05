@@ -5,6 +5,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import MobileSidebar from './MobileSidebar';
 
 interface NavbarProps {
   triggerEntrance?: boolean;
@@ -33,8 +34,8 @@ export default function HomeNavbar({ triggerEntrance }: NavbarProps) {
     { label: 'Home', href: '/home' },
     { label: 'Tours', href: '/tours' },
     { label: 'Operators', href: '/operators' },
-    { label: 'About Us', href: '#' },
-    { label: 'Support', href: '#' },
+    { label: 'About Us', href: '/about' },
+    { label: 'Support', href: '/support' },
   ];
 
   return (
@@ -120,29 +121,13 @@ export default function HomeNavbar({ triggerEntrance }: NavbarProps) {
         </div>
       </div>
 
-      {menuOpen && (
-        <div className="md:hidden bg-[#0f4d28]/95 backdrop-blur-md rounded-2xl px-6 py-5 mb-4 flex flex-col gap-4 border border-white/10 shadow-xl">
-          {navLinks.map((item) => (
-            <Link
-              key={item.label}
-              href={item.href}
-              onClick={() => setMenuOpen(false)}
-              className="text-[15px] font-medium text-white/90 hover:text-white transition-colors py-1"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            >
-              {item.label}
-            </Link>
-          ))}
-          <Link
-            href="/tours"
-            onClick={() => setMenuOpen(false)}
-            className="bg-white text-center rounded-full px-6 py-2.5 text-[13px] font-bold text-[#1b7a3d] hover:bg-[#f0fdf4] transition-colors mt-1"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            Book Now
-          </Link>
-        </div>
-      )}
+      <MobileSidebar
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        links={navLinks}
+        variant="dark"
+        cta={{ label: 'Book Now', href: '/tours' }}
+      />
     </nav>
   );
 }

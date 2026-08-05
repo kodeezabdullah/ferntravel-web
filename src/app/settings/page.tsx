@@ -47,9 +47,9 @@ export default function SettingsPage() {
                     Settings
                 </h1>
 
-                <div className="flex gap-12">
+                <div className="flex flex-col md:flex-row gap-8 md:gap-12">
                     {/* Sidebar */}
-                    <div className="w-[220px] shrink-0 flex flex-col gap-1">
+                    <div className="w-full md:w-[220px] md:shrink-0 flex flex-col gap-1">
                         {TABS.map((tab) => (
                             <button
                                 key={tab}

@@ -122,9 +122,9 @@ export default function MyBookingsPage() {
                         {filtered.map((booking) => (
                             <div
                                 key={booking.id}
-                                className="flex items-center gap-6 bg-white border border-[#ede8dc] rounded-2xl p-4 shadow-sm"
+                                className="flex flex-col md:flex-row md:items-center gap-4 md:gap-6 bg-white border border-[#ede8dc] rounded-2xl p-4 shadow-sm"
                             >
-                                <div className="relative w-[130px] h-[110px] rounded-xl overflow-hidden shrink-0">
+                                <div className="relative w-full h-[160px] md:w-[130px] md:h-[110px] rounded-xl overflow-hidden shrink-0">
                                     <Image
                                         src={booking.cover_image_url || FALLBACK_IMAGE}
                                         alt={booking.tour_name}
@@ -170,7 +170,7 @@ export default function MyBookingsPage() {
                                     )}
                                 </div>
 
-                                <div className="flex flex-col items-end gap-4">
+                                <div className="flex flex-row md:flex-col items-center md:items-end justify-between md:justify-start gap-4 w-full md:w-auto">
                                     <span
                                         className={`flex items-center gap-1.5 rounded-full px-3.5 py-1.5 text-[13px] font-bold ${STATUS_STYLES[booking.status]}`}
                                         style={{ fontFamily: 'var(--font-inter)' }}

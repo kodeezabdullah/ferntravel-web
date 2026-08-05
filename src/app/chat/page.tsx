@@ -35,6 +35,7 @@ function ChatPageInner() {
     const { session, loading: authLoading } = useRequireAuth();
     const searchParams = useSearchParams();
     const operatorParam = searchParams.get('operator');
+    const threadParam = searchParams.get('thread');
 
     const [activeFilter, setActiveFilter] = useState('All');
     const [message, setMessage] = useState('');
@@ -55,7 +56,10 @@ function ChatPageInner() {
             .then((data) => {
                 if (cancelled) return;
                 setThreads(data);
-                if (operatorParam) {
+                if (threadParam && data.some((t) => t.id === threadParam)) {
+                    setSelectedThreadId(threadParam);
+                    setActiveView('thread');
+                } else if (operatorParam) {
                     const match = data.find((t) => t.operator_id === operatorParam);
                     if (match) {
                         setSelectedThreadId(match.id);
@@ -72,7 +76,7 @@ function ChatPageInner() {
         return () => {
             cancelled = true;
         };
-    }, [session, operatorParam, threadsVersion]);
+    }, [session, operatorParam, threadParam, threadsVersion]);
 
     useEffect(() => {
         if (!selectedThreadId) return;

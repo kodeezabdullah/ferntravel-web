@@ -180,7 +180,7 @@ export default function TourDetailPage({
               </div>
               {/* Thumbnails */}
               {images.length > 1 && (
-                <div className="grid grid-cols-4 gap-3">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                   {images.map((img, i) => (
                     <button
                       key={i}
@@ -268,7 +268,7 @@ export default function TourDetailPage({
 
             {/* Included / Not Included */}
             {(included.length > 0 || notIncluded.length > 0) && (
-              <div className="grid grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
                 <div>
                   <h2
                     className="text-[18px] font-bold text-[#3d3229] mb-4"

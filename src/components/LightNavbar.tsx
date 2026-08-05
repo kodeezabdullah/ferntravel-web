@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import MobileSidebar from './MobileSidebar';
 
 interface NavLink {
   label: string;
@@ -16,8 +17,8 @@ const DEFAULT_LINKS: NavLink[] = [
   { label: 'Home', href: '/home' },
   { label: 'Tours', href: '/tours' },
   { label: 'Operators', href: '/operators' },
-  { label: 'About Us', href: '#' },
-  { label: 'Support', href: '#' },
+  { label: 'About Us', href: '/about' },
+  { label: 'Support', href: '/support' },
 ];
 
 export default function LightNavbar({ links = DEFAULT_LINKS }: LightNavbarProps) {
@@ -90,22 +91,12 @@ export default function LightNavbar({ links = DEFAULT_LINKS }: LightNavbarProps)
         </div>
       </div>
 
-      {/* Mobile Dropdown Panel */}
-      {menuOpen && (
-        <div className="md:hidden bg-white border-t border-[#ede8dc] px-6 py-4 flex flex-col gap-3 shadow-md">
-          {links.map((link) => (
-            <Link
-              key={link.label}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="text-[15px] font-medium text-[#5d5d5a] hover:text-[#1b7a3d] py-1 transition-colors"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            >
-              {link.label}
-            </Link>
-          ))}
-        </div>
-      )}
+      <MobileSidebar
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        links={links}
+        variant="light"
+      />
     </nav>
   );
 }
