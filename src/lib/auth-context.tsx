@@ -15,7 +15,7 @@ interface AuthContextValue {
     email: string,
     password: string,
     metadata: { full_name: string; phone_number: string },
-  ) => Promise<void>;
+  ) => Promise<{ needsEmailConfirmation: boolean }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<void>;
   refreshUser: () => Promise<void>;
@@ -74,12 +74,13 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       password: string,
       metadata: { full_name: string; phone_number: string },
     ) => {
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email,
         password,
         options: { data: metadata },
       });
       if (error) throw error;
+      return { needsEmailConfirmation: !data.session };
     },
     [],
   );

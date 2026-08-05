@@ -67,6 +67,7 @@ export default function SignupPage() {
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
+  const [awaitingConfirmation, setAwaitingConfirmation] = useState(false);
 
   const E164_PATTERN = /^\+[1-9]\d{6,14}$/;
 
@@ -80,11 +81,15 @@ export default function SignupPage() {
 
     setSubmitting(true);
     try {
-      await signUpWithPassword(email, password, {
+      const { needsEmailConfirmation } = await signUpWithPassword(email, password, {
         full_name: fullName.trim(),
         phone_number: phone.trim(),
       });
-      router.push('/home');
+      if (needsEmailConfirmation) {
+        setAwaitingConfirmation(true);
+      } else {
+        router.push('/home');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to create account.');
     } finally {
@@ -113,6 +118,35 @@ export default function SignupPage() {
       subtext="Join thousands of travellers discovering trails across the north."
     >
       <AuthCard>
+        {awaitingConfirmation ? (
+          <div className="flex flex-col items-center text-center py-4">
+            <div className="w-14 h-14 rounded-full flex items-center justify-center mb-4" style={{ background: 'rgba(242,169,59,0.15)' }}>
+              <span className="text-[26px]">📧</span>
+            </div>
+            <h2
+              className="text-white text-[20px] font-bold mb-2"
+              style={{ fontFamily: 'var(--font-poppins), sans-serif' }}
+            >
+              Check your email
+            </h2>
+            <p className="text-[13.5px] leading-relaxed mb-6" style={{ color: 'rgba(255,255,255,0.55)' }}>
+              We sent a confirmation link to <strong style={{ color: 'rgba(255,255,255,0.85)' }}>{email}</strong>.
+              Click it to activate your account, then come back and log in.
+            </p>
+            <Link
+              href="/login"
+              className="w-full text-center rounded-full py-3 text-[15px] font-bold transition-all duration-150 hover:brightness-105 active:scale-[0.98]"
+              style={{
+                background: '#f2a93b',
+                color: '#1a1a1a',
+                fontFamily: 'var(--font-poppins), sans-serif',
+              }}
+            >
+              Go to Login
+            </Link>
+          </div>
+        ) : (
+          <>
         {/* Role switcher */}
         <RoleSwitcher
           options={ROLE_OPTIONS}
@@ -260,6 +294,8 @@ export default function SignupPage() {
             </Link>
           </p>
         </div>
+          </>
+        )}
       </AuthCard>
     </AuthLayout>
   );
