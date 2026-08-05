@@ -4,6 +4,7 @@ import { useRef, useState } from 'react';
 import Image from 'next/image';
 import { useGSAP } from '@gsap/react';
 import gsap from 'gsap';
+import MobileSidebar from './MobileSidebar';
 
 interface NavbarProps {
   /** When true the nav plays its entrance (called by HeroSection after all text animations) */
@@ -102,30 +103,12 @@ export default function Navbar({ triggerEntrance }: NavbarProps) {
         </button>
       </div>
 
-      {/* Mobile Dropdown Panel */}
-      {menuOpen && (
-        <div className="md:hidden bg-[#0f4d28]/95 backdrop-blur-md rounded-2xl px-6 py-5 mb-4 flex flex-col gap-4 border border-white/10 shadow-xl">
-          {navLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              onClick={() => setMenuOpen(false)}
-              className="text-[15px] font-medium text-white/90 hover:text-white transition-colors py-1"
-              style={{ fontFamily: 'var(--font-inter)' }}
-            >
-              {link.label}
-            </a>
-          ))}
-          <a
-            href="/login"
-            onClick={() => setMenuOpen(false)}
-            className="bg-white text-center rounded-full px-6 py-2.5 text-[13px] font-bold text-[#1b7a3d] hover:bg-[#f0fdf4] transition-colors mt-1"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            Log in / Sign up
-          </a>
-        </div>
-      )}
+      <MobileSidebar
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        links={navLinks}
+        cta={{ label: 'Log in / Sign up', href: '/login' }}
+      />
     </nav>
   );
 }

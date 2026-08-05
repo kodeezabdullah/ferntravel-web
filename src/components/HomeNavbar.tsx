@@ -125,7 +125,6 @@ export default function HomeNavbar({ triggerEntrance }: NavbarProps) {
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         links={navLinks}
-        variant="dark"
         cta={{ label: 'Book Now', href: '/tours' }}
       />
     </nav>

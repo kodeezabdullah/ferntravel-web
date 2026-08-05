@@ -35,6 +35,7 @@ export default function MyBookingsPage() {
     const [activeTab, setActiveTab] = useState<Tab>('Upcoming');
     const [bookings, setBookings] = useState<Booking[]>([]);
     const [loading, setLoading] = useState(true);
+    const [cancellingId, setCancellingId] = useState<string | null>(null);
 
     useEffect(() => {
         if (!session) return;
@@ -69,6 +70,21 @@ export default function MyBookingsPage() {
     }
 
     if (!session) return null;
+
+    const handleCancel = async (bookingId: string) => {
+        if (!window.confirm('Cancel this booking? This cannot be undone.')) return;
+        setCancellingId(bookingId);
+        try {
+            const updated = await apiFetch<Booking>(`/bookings/${bookingId}/cancel`, {
+                method: 'PATCH',
+            });
+            setBookings((prev) => prev.map((b) => (b.id === bookingId ? { ...b, ...updated } : b)));
+        } catch {
+            // leave booking state unchanged so the user can retry
+        } finally {
+            setCancellingId(null);
+        }
+    };
 
     const filtered = bookings.filter((b) => {
         if (activeTab === 'Cancelled') return b.status === 'cancelled';
@@ -189,6 +205,17 @@ export default function MyBookingsPage() {
                                                 💬 Message
                                             </button>
                                         </Link>
+                                        {booking.status !== 'cancelled' && (
+                                            <button
+                                                type="button"
+                                                disabled={cancellingId === booking.id}
+                                                onClick={() => handleCancel(booking.id)}
+                                                className="text-red-500 text-[14px] font-medium cursor-pointer hover:text-red-600 transition-colors disabled:opacity-60"
+                                                style={{ fontFamily: 'var(--font-inter)' }}
+                                            >
+                                                {cancellingId === booking.id ? 'Cancelling…' : 'Cancel Tour'}
+                                            </button>
+                                        )}
                                         <Link href={`/tours/${booking.tour_id}`}>
                                             <button
                                                 type="button"

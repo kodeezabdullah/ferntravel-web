@@ -95,7 +95,6 @@ export default function LightNavbar({ links = DEFAULT_LINKS }: LightNavbarProps)
         open={menuOpen}
         onClose={() => setMenuOpen(false)}
         links={links}
-        variant="light"
       />
     </nav>
   );
