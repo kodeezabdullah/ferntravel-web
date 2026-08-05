@@ -8,6 +8,7 @@ import AuthCard from '@/components/auth/AuthCard';
 import RoleSwitcher from '@/components/auth/RoleSwitcher';
 import AuthInput from '@/components/auth/AuthInput';
 import { useAuth } from '@/lib/auth-context';
+import { apiFetch } from '@/lib/api';
 
 /* ── Eye icon SVGs ── */
 function EyeOpen() {
@@ -81,9 +82,32 @@ export default function SignupPage() {
 
     setSubmitting(true);
     try {
-      const { needsEmailConfirmation } = await signUpWithPassword(email, password, {
+      const trimmedEmail = email.trim();
+      const trimmedPhone = phone.trim();
+
+      // Catch a duplicate phone/email before calling signUp() — Supabase's own error for
+      // this case is a generic, unhelpful "Database error saving new user".
+      const [phoneCheck, emailCheck] = await Promise.all([
+        apiFetch<{ available: boolean }>(
+          `/auth/phone-available?phone_number=${encodeURIComponent(trimmedPhone)}`,
+        ),
+        apiFetch<{ available: boolean }>(
+          `/auth/email-available?email=${encodeURIComponent(trimmedEmail)}`,
+        ),
+      ]);
+
+      if (!emailCheck.available) {
+        setError('An account with this email already exists. Try logging in instead.');
+        return;
+      }
+      if (!phoneCheck.available) {
+        setError('This phone number is already registered to another account.');
+        return;
+      }
+
+      const { needsEmailConfirmation } = await signUpWithPassword(trimmedEmail, password, {
         full_name: fullName.trim(),
-        phone_number: phone.trim(),
+        phone_number: trimmedPhone,
       });
       if (needsEmailConfirmation) {
         setAwaitingConfirmation(true);
@@ -91,6 +115,7 @@ export default function SignupPage() {
         router.push('/home');
       }
     } catch (err) {
+      console.error('Signup failed:', err);
       setError(err instanceof Error ? err.message : 'Failed to create account.');
     } finally {
       setSubmitting(false);
