@@ -1,7 +1,7 @@
 import HomeHeroSection from '@/components/HomeHeroSection';
 import ToursSection from '@/components/ToursSection';
 import OperatorsSection from '@/components/OperatorsSection';
-import MapSection from '@/components/MapSection';
+import MapSection from '@/components/MapSectionClient';
 import HomeFooter from '@/components/HomeFooter';
 
 export default function HomePage() {

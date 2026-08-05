@@ -7,6 +7,7 @@ import AuthLayout from '@/components/auth/AuthLayout';
 import AuthCard from '@/components/auth/AuthCard';
 import RoleSwitcher from '@/components/auth/RoleSwitcher';
 import AuthInput from '@/components/auth/AuthInput';
+import { useAuth } from '@/lib/auth-context';
 
 /* ── Eye icon SVGs ── */
 function EyeOpen() {
@@ -55,8 +56,35 @@ function OrDivider() {
 
 export default function LoginPage() {
   const router = useRouter();
+  const { signInWithPassword, signInWithGoogle } = useAuth();
   const [role, setRole] = useState<'Traveler' | 'Operator'>('Traveler');
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const handleLogin = async () => {
+    setError(null);
+    setSubmitting(true);
+    try {
+      await signInWithPassword(email, password);
+      router.push('/home');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to sign in.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to sign in with Google.');
+    }
+  };
 
   return (
     <AuthLayout
@@ -98,6 +126,8 @@ export default function LoginPage() {
           type="text"
           placeholder="you@example.com"
           autoComplete="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <AuthInput
@@ -106,6 +136,8 @@ export default function LoginPage() {
           type={showPassword ? 'text' : 'password'}
           placeholder="••••••••"
           autoComplete="current-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           rightSlot={
             <button
               type="button"
@@ -141,19 +173,26 @@ export default function LoginPage() {
           </a>
         </div>
 
+        {error && (
+          <p className="text-[13px] mb-3" style={{ color: '#f28b6b', fontFamily: 'var(--font-inter)' }}>
+            {error}
+          </p>
+        )}
+
         {/* Primary CTA */}
         <button
           id="login-submit"
           type="button"
-          onClick={() => router.push('/home')}
-          className="w-full rounded-full py-3 text-[15px] font-bold transition-all duration-150 hover:brightness-105 active:scale-[0.98]"
+          disabled={submitting}
+          onClick={handleLogin}
+          className="w-full rounded-full py-3 text-[15px] font-bold transition-all duration-150 hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
           style={{
             background: '#f2a93b',
             color: '#1a1a1a',
             fontFamily: 'var(--font-poppins), sans-serif',
           }}
         >
-          Login
+          {submitting ? 'Signing in…' : 'Login'}
         </button>
 
         <OrDivider />
@@ -162,7 +201,7 @@ export default function LoginPage() {
         <button
           id="login-google"
           type="button"
-          onClick={() => router.push('/home')}
+          onClick={handleGoogle}
           className="w-full rounded-full py-3 text-[14px] font-medium flex items-center justify-center gap-3 transition-all duration-150 hover:bg-white/10 active:scale-[0.98]"
           style={{
             background: 'transparent',

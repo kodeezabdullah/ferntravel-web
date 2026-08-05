@@ -3,6 +3,7 @@ import { Anton, Alex_Brush, Inter, Poppins } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import LoadingScreen from "@/components/LoadingScreen";
 import PageTransition from "@/components/Pagetransition";
+import { AuthProvider } from "@/lib/auth-context";
 import "./globals.css";
 
 const anton = Anton({
@@ -43,9 +44,11 @@ export default function RootLayout({
       className={`${anton.variable} ${alexBrush.variable} ${inter.variable} ${poppins.variable} h-full antialiased`}
     >
       <body className="min-h-full bg-[#faf7f2]">
-        <LoadingScreen />
-        <PageTransition>{children}</PageTransition>
-        <Analytics />
+        <AuthProvider>
+          <LoadingScreen />
+          <PageTransition>{children}</PageTransition>
+          <Analytics />
+        </AuthProvider>
       </body>
     </html>
   );

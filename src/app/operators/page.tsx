@@ -1,118 +1,65 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import HomeNavbar from '@/components/HomeNavbar';
 import HomeFooter from '@/components/HomeFooter';
 import OperatorTourRow from '@/components/OperatorTourRow';
 import { Tour } from '@/components/DestinationTourRow';
 import Image from 'next/image';
+import { apiFetch } from '@/lib/api';
+import type { Operator, Tour as ApiTour } from '@/types/api';
 
-const NORTHERN_TOURS: Tour[] = [
-  {
-    name: 'Northern Weekend Escape',
-    duration: '3 Days 2 Nights',
-    price: '18,500',
-    date: '18 Jul 2026',
-    rating: 4.8,
-    image: '/assets/nature-1.jpg',
-  },
-  {
-    name: 'Northern Valley Trek',
-    duration: '3 Days 2 Nights',
-    price: '22,000',
-    date: '22 Jul 2026',
-    rating: 4.8,
-    image: '/assets/nature-2.jpg',
-  },
-  {
-    name: 'Northern Adventure Tour',
-    duration: '3 Days 2 Nights',
-    price: '27,900',
-    date: '27 Jul 2026',
-    rating: 4.8,
-    image: '/assets/nature-3.jpg',
-  },
-];
+const FALLBACK_IMAGE = '/assets/nature-1.jpg';
 
-const KARAKORAM_TOURS: Tour[] = [
-  {
-    name: 'Karakoram Weekend Escape',
-    duration: '3 Days 2 Nights',
-    price: '18,500',
-    date: '22 Jul 2026',
-    rating: 4.8,
-    image: '/assets/nature-4.jpg',
-  },
-  {
-    name: 'Karakoram Valley Trek',
-    duration: '3 Days 2 Nights',
-    price: '22,000',
-    date: '27 Jul 2026',
-    rating: 4.8,
-    image: '/assets/nature-5.jpg',
-  },
-  {
-    name: 'Karakoram Adventure Tour',
-    duration: '3 Days 2 Nights',
-    price: '27,900',
-    date: '02 Aug 2026',
-    rating: 4.8,
-    image: '/assets/hunza-valley.jpg',
-  },
-];
+interface OperatorRow {
+  operator: Operator;
+  tours: Tour[];
+}
 
-const SUMMIT_TOURS: Tour[] = [
-  {
-    name: 'Summit Weekend Escape',
-    duration: '3 Days 2 Nights',
-    price: '18,500',
-    date: '18 Jul 2026',
-    rating: 4.9,
-    image: '/assets/nature-5.jpg',
-  },
-  {
-    name: 'Summit Valley Trek',
-    duration: '3 Days 2 Nights',
-    price: '22,000',
-    date: '22 Jul 2026',
-    rating: 4.9,
-    image: '/assets/hunza-valley.jpg',
-  },
-  {
-    name: 'Summit Adventure Tour',
-    duration: '3 Days 2 Nights',
-    price: '27,900',
-    date: '27 Jul 2026',
-    rating: 4.9,
-    image: '/assets/nature-1.jpg',
-  },
-];
-
-const WILD_VALLEY_TOURS: Tour[] = [
-  {
-    name: 'Wild Weekend Escape',
-    duration: '3 Days 2 Nights',
-    price: '18,500',
-    date: '18 Jul 2026',
-    rating: 4.7,
-    image: '/assets/nature-2.jpg',
-  },
-  {
-    name: 'Wild Valley Trek',
-    duration: '3 Days 2 Nights',
-    price: '22,000',
-    date: '22 Jul 2026',
-    rating: 4.7,
-    image: '/assets/nature-3.jpg',
-  },
-  {
-    name: 'Wild Adventure Tour',
-    duration: '3 Days 2 Nights',
-    price: '27,900',
-    date: '27 Jul 2026',
-    rating: 4.7,
-    image: '/assets/nature-4.jpg',
-  },
-];
+function toRowTour(tour: ApiTour): Tour {
+  return {
+    id: tour.id,
+    name: tour.tour_name,
+    duration: tour.duration,
+    price: tour.cost.toLocaleString('en-PK'),
+    date: tour.status ?? '',
+    rating: tour.rating ?? 0,
+    image: tour.cover_image_url || FALLBACK_IMAGE,
+  };
+}
 
 export default function OperatorsPage() {
+  const [rows, setRows] = useState<OperatorRow[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    apiFetch<Operator[]>('/operators?limit=8')
+      .then(async (operators) => {
+        if (cancelled) return;
+        const withTours = await Promise.all(
+          operators.map(async (operator) => {
+            const tours = await apiFetch<ApiTour[]>(`/operators/${operator.id}/tours`).catch(
+              () => [],
+            );
+            return { operator, tours: tours.map(toRowTour) };
+          }),
+        );
+        if (!cancelled) setRows(withTours);
+      })
+      .catch(() => {
+        if (!cancelled) setRows([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <main className="w-full bg-[#faf7f2] min-h-screen">
       {/* Navbar */}
@@ -185,48 +132,35 @@ export default function OperatorsPage() {
         </div>
 
         {/* Operators rows */}
-        <OperatorTourRow
-          operatorName="Northern Trails Co."
-          tourCount={24}
-          rating={4.9}
-          tours={NORTHERN_TOURS}
-          profileHref="/operators/northern-trails-co"
-        />
+        {!loading && rows.length === 0 && (
+          <p className="text-[#8a8a85] text-[15px]" style={{ fontFamily: 'var(--font-inter)' }}>
+            No operators available right now.
+          </p>
+        )}
 
-        <OperatorTourRow
-          operatorName="Karakoram Adventures"
-          tourCount={18}
-          rating={4.8}
-          tours={KARAKORAM_TOURS}
-          profileHref="/operators/northern-trails-co"
-        />
-
-        <OperatorTourRow
-          operatorName="Summit Seekers PK"
-          tourCount={31}
-          rating={4.9}
-          tours={SUMMIT_TOURS}
-          profileHref="/operators/northern-trails-co"
-        />
-
-        <OperatorTourRow
-          operatorName="Wild Valley Treks"
-          tourCount={12}
-          rating={4.7}
-          tours={WILD_VALLEY_TOURS}
-          profileHref="/operators/northern-trails-co"
-        />
+        {rows.map(({ operator, tours }) => (
+          <OperatorTourRow
+            key={operator.id}
+            operatorName={operator.operator_name}
+            tourCount={operator.tours_hosted ?? tours.length}
+            rating={operator.rating ?? 0}
+            tours={tours}
+            profileHref={`/operators/${operator.id}`}
+          />
+        ))}
 
         {/* See More Button */}
-        <div className="flex justify-center mt-12 mb-8">
-          <button
-            type="button"
-            className="border border-[#1b7a3d] text-[#1b7a3d] hover:bg-[#1b7a3d] hover:text-white transition-all duration-300 rounded-full px-8 py-3 font-bold text-[14px] cursor-pointer"
-            style={{ fontFamily: 'var(--font-inter)' }}
-          >
-            See More Operators
-          </button>
-        </div>
+        {rows.length > 0 && (
+          <div className="flex justify-center mt-12 mb-8">
+            <button
+              type="button"
+              className="border border-[#1b7a3d] text-[#1b7a3d] hover:bg-[#1b7a3d] hover:text-white transition-all duration-300 rounded-full px-8 py-3 font-bold text-[14px] cursor-pointer"
+              style={{ fontFamily: 'var(--font-inter)' }}
+            >
+              See More Operators
+            </button>
+          </div>
+        )}
       </section>
 
       {/* Footer */}

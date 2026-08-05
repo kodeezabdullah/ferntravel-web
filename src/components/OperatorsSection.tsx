@@ -1,21 +1,31 @@
 'use client';
+
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
-
-interface Operator {
-  id: number;
-  name: string;
-  tours: number;
-  rating: number;
-}
-
-const OPERATORS_DATA: Operator[] = [
-  { id: 1, name: 'Northern Trails Co.', tours: 24, rating: 4.9 },
-  { id: 2, name: 'Karakoram Adventures', tours: 18, rating: 4.8 },
-  { id: 3, name: 'Summit Seekers PK', tours: 31, rating: 4.9 },
-  { id: 4, name: 'Wild Valley Treks', tours: 12, rating: 4.7 },
-];
+import { apiFetch } from '@/lib/api';
+import type { Operator } from '@/types/api';
 
 export default function OperatorsSection() {
+  const [operators, setOperators] = useState<Operator[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    apiFetch<Operator[]>('/operators?limit=4')
+      .then((data) => {
+        if (!cancelled) setOperators(data);
+      })
+      .catch(() => {
+        if (!cancelled) setOperators([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <section className="w-full bg-[#faf7f2] pb-24 px-6 md:px-12">
       <div className="max-w-[1200px] mx-auto">
@@ -35,12 +45,18 @@ export default function OperatorsSection() {
           </p>
         </div>
 
+        {!loading && operators.length === 0 && (
+          <p className="text-[#8a8a85] text-[15px]" style={{ fontFamily: 'var(--font-inter)' }}>
+            No operators available right now.
+          </p>
+        )}
+
         {/* Operators Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
-          {OPERATORS_DATA.map((op) => (
+          {operators.map((op) => (
             <Link
               key={op.id}
-              href="/operators/northern-trails-co"
+              href={`/operators/${op.id}`}
               className="bg-white rounded-[20px] p-6 border border-[#ede8dc] hover:-translate-y-1.5 hover:shadow-[0px_20px_40px_rgba(0,0,0,0.06)] transition-all duration-300 flex flex-col justify-between h-full cursor-pointer"
             >
               <div>
@@ -64,12 +80,14 @@ export default function OperatorsSection() {
                   </div>
 
                   {/* Verified badge */}
-                  <span
-                    className="bg-[#c8e6d0] text-[#1b7a3d] text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap flex items-center gap-1 select-none"
-                    style={{ fontFamily: 'var(--font-inter)' }}
-                  >
-                    ✓ Verified
-                  </span>
+                  {op.verified && (
+                    <span
+                      className="bg-[#c8e6d0] text-[#1b7a3d] text-[11px] font-bold px-3 py-1 rounded-full whitespace-nowrap flex items-center gap-1 select-none"
+                      style={{ fontFamily: 'var(--font-inter)' }}
+                    >
+                      ✓ Verified
+                    </span>
+                  )}
                 </div>
 
                 {/* Operator Name */}
@@ -77,7 +95,7 @@ export default function OperatorsSection() {
                   className="text-[18px] font-bold text-[#3d3229] leading-snug mb-2"
                   style={{ fontFamily: 'var(--font-poppins)' }}
                 >
-                  {op.name}
+                  {op.operator_name}
                 </h3>
 
                 {/* Stats */}
@@ -85,7 +103,8 @@ export default function OperatorsSection() {
                   className="text-[13.5px] text-[#8a8a85] mb-6"
                   style={{ fontFamily: 'var(--font-inter)' }}
                 >
-                  {op.tours} tours &middot; <span className="text-[#f2a93b]">★</span> {op.rating}
+                  {op.tours_hosted ?? 0} tours &middot;{' '}
+                  <span className="text-[#f2a93b]">★</span> {(op.rating ?? 0).toFixed(1)}
                 </p>
               </div>
 

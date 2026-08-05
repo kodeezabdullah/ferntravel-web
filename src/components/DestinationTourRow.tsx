@@ -6,6 +6,7 @@ import Link from 'next/link';
 import gsap from 'gsap';
 
 export interface Tour {
+  id: string;
   name: string;
   duration: string;
   price: string;
@@ -122,9 +123,9 @@ export default function DestinationTourRow({
         ref={scrollContainerRef}
         className="flex gap-6 overflow-x-auto scroll-smooth scrollbar-none py-2 px-1"
       >
-        {tours.map((tour, idx) => (
+        {tours.map((tour) => (
           <div
-            key={idx}
+            key={tour.id}
             className="flex-shrink-0 w-[280px] md:w-[350px] h-[380px] rounded-2xl overflow-hidden relative group cursor-pointer shadow-sm hover:shadow-md transition-all duration-300 border border-[#ede8dc]/40"
           >
             <Image
@@ -179,7 +180,7 @@ export default function DestinationTourRow({
                 <span style={{ fontFamily: 'var(--font-inter)' }}>{tour.date}</span>
               </div>
 
-              <Link href="/tours/fairy-meadows-3-day-trek" className="w-full block mt-4">
+              <Link href={`/tours/${tour.id}`} className="w-full block mt-4">
                 <button
                   type="button"
                   className="w-full border border-white/35 bg-white/10 hover:bg-white/20 transition-all rounded-full py-2.5 text-[13.5px] font-bold text-white text-center cursor-pointer"

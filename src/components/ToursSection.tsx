@@ -1,81 +1,36 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-
-interface Tour {
-  id: number;
-  name: string;
-  location: string;
-  duration: string;
-  price: string;
-  rating: string;
-  image: string;
-}
+import { apiFetch } from '@/lib/api';
+import type { Tour as ApiTour } from '@/types/api';
 
 const CATEGORIES = ['All Tours', 'Trekking', 'Family', 'Solo', 'Adventure'];
-
-const TOURS_DATA: Tour[] = [
-  {
-    id: 1,
-    name: 'Fairy Meadows Trek',
-    location: 'Gilgit-Baltistan',
-    duration: '3 Days 2 Nights',
-    price: 'PKR 24,500',
-    rating: '4.9',
-    image: '/assets/nature-1.jpg',
-  },
-  {
-    id: 2,
-    name: 'Hunza Valley Escape',
-    location: 'Hunza, Gilgit-Baltistan',
-    duration: '5 Days 4 Nights',
-    price: 'PKR 38,900',
-    rating: '4.8',
-    image: '/assets/hunza-valley.jpg',
-  },
-  {
-    id: 3,
-    name: 'Skardu Lake Circuit',
-    location: 'Skardu, GB',
-    duration: '4 Days 3 Nights',
-    price: 'PKR 31,200',
-    rating: '4.9',
-    image: '/assets/skardu-peek.jpg',
-  },
-  {
-    id: 4,
-    name: 'Naran Valley Getaway',
-    location: 'Naran, KPK',
-    duration: '3 Days 2 Nights',
-    price: 'PKR 22,000',
-    rating: '4.7',
-    image: '/assets/nature-2.jpg',
-  },
-  {
-    id: 5,
-    name: 'Deosai Plains Camp',
-    location: 'Deosai, Gilgit-Baltistan',
-    duration: '6 Days 5 Nights',
-    price: 'PKR 45,000',
-    rating: '4.9',
-    image: '/assets/nature-3.jpg',
-  },
-  {
-    id: 6,
-    name: 'Naltar Valley Explore',
-    location: 'Naltar, Gilgit-Baltistan',
-    duration: '4 Days 3 Nights',
-    price: 'PKR 28,000',
-    rating: '4.8',
-    image: '/assets/nature-4.jpg',
-  },
-];
+const FALLBACK_IMAGE = '/assets/nature-1.jpg';
 
 export default function ToursSection() {
   const [activeCategory, setActiveCategory] = useState('All Tours');
+  const [tours, setTours] = useState<ApiTour[]>([]);
+  const [loading, setLoading] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    apiFetch<ApiTour[]>('/tours?limit=12')
+      .then((data) => {
+        if (!cancelled) setTours(data);
+      })
+      .catch(() => {
+        if (!cancelled) setTours([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const scroll = (direction: 'left' | 'right') => {
     if (!scrollContainerRef.current) return;
@@ -182,17 +137,25 @@ export default function ToursSection() {
             ref={scrollContainerRef}
             className="flex gap-8 overflow-x-auto scroll-smooth scrollbar-none py-4 px-2"
           >
-            {TOURS_DATA.map((tour) => (
+            {!loading && tours.length === 0 && (
+              <p
+                className="text-[#8a8a85] text-[15px] py-8"
+                style={{ fontFamily: 'var(--font-inter)' }}
+              >
+                No tours available right now.
+              </p>
+            )}
+            {tours.map((tour) => (
               <Link
                 key={tour.id}
-                href="/tours/fairy-meadows-3-day-trek"
+                href={`/tours/${tour.id}`}
                 className="flex-shrink-0 w-[280px] md:w-[370px] bg-white rounded-[20px] overflow-hidden border border-[#ede8dc] hover:-translate-y-1.5 hover:shadow-[0px_20px_40px_rgba(0,0,0,0.08)] transition-all duration-300 flex flex-col h-full group cursor-pointer"
               >
                 {/* Cover Photo */}
                 <div className="relative w-full h-[240px] overflow-hidden">
                   <Image
-                    src={tour.image}
-                    alt={tour.name}
+                    src={tour.cover_image_url || FALLBACK_IMAGE}
+                    alt={tour.tour_name}
                     fill
                     sizes="(max-width: 768px) 100vw, 33vw"
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -204,7 +167,7 @@ export default function ToursSection() {
                     style={{ fontFamily: 'var(--font-inter)' }}
                   >
                     <span className="text-[#f2a93b]">★</span>
-                    <span>{tour.rating}</span>
+                    <span>{(tour.rating ?? 0).toFixed(1)}</span>
                   </div>
                 </div>
 
@@ -215,7 +178,7 @@ export default function ToursSection() {
                     <div className="flex items-center gap-1 min-w-0">
                       <span className="text-[14px] flex-shrink-0">📍</span>
                       <span className="truncate" style={{ fontFamily: 'var(--font-inter)' }}>
-                        {tour.location}
+                        {tour.destination}
                       </span>
                     </div>
                     <span className="flex-shrink-0" style={{ fontFamily: 'var(--font-inter)' }}>
@@ -228,7 +191,7 @@ export default function ToursSection() {
                     className="text-[19px] font-bold text-[#3d3229] leading-snug mb-4 flex-grow"
                     style={{ fontFamily: 'var(--font-poppins)' }}
                   >
-                    {tour.name}
+                    {tour.tour_name}
                   </h3>
 
                   {/* Price section */}
@@ -237,7 +200,7 @@ export default function ToursSection() {
                       className="text-[18px] font-bold text-[#1b7a3d]"
                       style={{ fontFamily: 'var(--font-poppins)' }}
                     >
-                      {tour.price}
+                      PKR {tour.cost.toLocaleString('en-PK')}
                     </span>
                     <span
                       className="text-[12.5px] text-[#8a8a85]"

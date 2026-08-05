@@ -1,37 +1,65 @@
+'use client';
+
+import { useEffect, useState } from 'react';
 import HomeNavbar from '@/components/HomeNavbar';
 import HomeFooter from '@/components/HomeFooter';
 import DestinationTourRow, { Tour } from '@/components/DestinationTourRow';
 import Image from 'next/image';
+import { apiFetch } from '@/lib/api';
+import type { Tour as ApiTour } from '@/types/api';
 
-const NARAN_TOURS: Tour[] = [
-  { name: 'Naran Kaghan Valley Discovery', duration: '3 Days 2 Nights', price: '18,500', date: '18 Jul 2026', rating: 4.8, image: '/assets/nature-1.jpg' },
-  { name: 'Naran Kaghan Weekend Getaway', duration: '3 Days 2 Nights', price: '22,000', date: '22 Jul 2026', rating: 4.8, image: '/assets/nature-2.jpg' },
-  { name: 'Naran Kaghan Adventure Trek', duration: '3 Days 2 Nights', price: '27,900', date: '27 Jul 2026', rating: 4.8, image: '/assets/nature-3.jpg' },
-  { name: 'Naran Kaghan Family Escape', duration: '4 Days 3 Nights', price: '24,000', date: '02 Aug 2026', rating: 4.7, image: '/assets/nature-4.jpg' },
-];
+const FALLBACK_IMAGE = '/assets/nature-1.jpg';
 
-const KALAM_TOURS: Tour[] = [
-  { name: 'Kalam Valley Discovery', duration: '3 Days 2 Nights', price: '18,500', date: '22 Jul 2026', rating: 4.8, image: '/assets/nature-4.jpg' },
-  { name: 'Kalam Weekend Getaway', duration: '3 Days 2 Nights', price: '22,000', date: '27 Jul 2026', rating: 4.8, image: '/assets/nature-5.jpg' },
-  { name: 'Kalam Adventure Trek', duration: '3 Days 2 Nights', price: '27,900', date: '02 Aug 2026', rating: 4.8, image: '/assets/hunza-valley.jpg' },
-  { name: 'Kalam Family Escape', duration: '4 Days 3 Nights', price: '24,000', date: '18 Jul 2026', rating: 4.7, image: '/assets/nature-1.jpg' },
-];
+interface DestinationGroup {
+  destination: string;
+  tours: Tour[];
+}
 
-const SKARDU_TOURS: Tour[] = [
-  { name: 'Skardu Valley Discovery', duration: '3 Days 2 Nights', price: '18,500', date: '27 Jul 2026', rating: 4.8, image: '/assets/nature-2.jpg' },
-  { name: 'Skardu Weekend Getaway', duration: '3 Days 2 Nights', price: '22,000', date: '02 Aug 2026', rating: 4.8, image: '/assets/nature-3.jpg' },
-  { name: 'Skardu Adventure Trek', duration: '3 Days 2 Nights', price: '27,900', date: '18 Jul 2026', rating: 4.8, image: '/assets/nature-4.jpg' },
-  { name: 'Skardu Family Escape', duration: '4 Days 3 Nights', price: '24,000', date: '22 Jul 2026', rating: 4.7, image: '/assets/nature-5.jpg' },
-];
-
-const HUNZA_TOURS: Tour[] = [
-  { name: 'Hunza Valley Discovery', duration: '3 Days 2 Nights', price: '18,500', date: '02 Aug 2026', rating: 4.8, image: '/assets/hunza-valley.jpg' },
-  { name: 'Hunza Weekend Getaway', duration: '3 Days 2 Nights', price: '22,000', date: '18 Jul 2026', rating: 4.8, image: '/assets/nature-1.jpg' },
-  { name: 'Hunza Adventure Trek', duration: '3 Days 2 Nights', price: '27,900', date: '22 Jul 2026', rating: 4.8, image: '/assets/nature-2.jpg' },
-  { name: 'Hunza Family Escape', duration: '4 Days 3 Nights', price: '24,000', date: '27 Jul 2026', rating: 4.7, image: '/assets/nature-3.jpg' },
-];
+function toRowTour(tour: ApiTour): Tour {
+  return {
+    id: tour.id,
+    name: tour.tour_name,
+    duration: tour.duration,
+    price: tour.cost.toLocaleString('en-PK'),
+    date: tour.status ?? '',
+    rating: tour.rating ?? 0,
+    image: tour.cover_image_url || FALLBACK_IMAGE,
+  };
+}
 
 export default function ToursPage() {
+  const [groups, setGroups] = useState<DestinationGroup[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let cancelled = false;
+    apiFetch<ApiTour[]>('/tours?limit=50')
+      .then((tours) => {
+        if (cancelled) return;
+        const byDestination = new Map<string, ApiTour[]>();
+        for (const tour of tours) {
+          const key = tour.destination || 'Other';
+          if (!byDestination.has(key)) byDestination.set(key, []);
+          byDestination.get(key)!.push(tour);
+        }
+        setGroups(
+          Array.from(byDestination.entries()).map(([destination, tours]) => ({
+            destination,
+            tours: tours.map(toRowTour),
+          })),
+        );
+      })
+      .catch(() => {
+        if (!cancelled) setGroups([]);
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   return (
     <main className="w-full bg-[#faf7f2] min-h-screen">
       {/* Navbar */}
@@ -104,10 +132,19 @@ export default function ToursPage() {
         </div>
 
         {/* Destinations Rows */}
-        <DestinationTourRow destinationName="Naran Kaghan" tourCount={12} tours={NARAN_TOURS} />
-        <DestinationTourRow destinationName="Kalam" tourCount={8} tours={KALAM_TOURS} />
-        <DestinationTourRow destinationName="Skardu" tourCount={15} tours={SKARDU_TOURS} />
-        <DestinationTourRow destinationName="Hunza Valley" tourCount={10} tours={HUNZA_TOURS} />
+        {!loading && groups.length === 0 && (
+          <p className="text-[#8a8a85] text-[15px]" style={{ fontFamily: 'var(--font-inter)' }}>
+            No tours available right now.
+          </p>
+        )}
+        {groups.map((group) => (
+          <DestinationTourRow
+            key={group.destination}
+            destinationName={group.destination}
+            tourCount={group.tours.length}
+            tours={group.tours}
+          />
+        ))}
       </section>
 
       {/* Footer */}

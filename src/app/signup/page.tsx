@@ -7,6 +7,8 @@ import AuthLayout from '@/components/auth/AuthLayout';
 import AuthCard from '@/components/auth/AuthCard';
 import RoleSwitcher from '@/components/auth/RoleSwitcher';
 import AuthInput from '@/components/auth/AuthInput';
+import { useAuth } from '@/lib/auth-context';
+import { apiFetch } from '@/lib/api';
 
 /* ── Eye icon SVGs ── */
 function EyeOpen() {
@@ -57,8 +59,52 @@ const ROLE_OPTIONS: [string, string] = ['Sign up as Traveler', 'Sign up as Opera
 
 export default function SignupPage() {
   const router = useRouter();
+  const { signUpWithPassword, signInWithGoogle } = useAuth();
   const [role, setRole] = useState(ROLE_OPTIONS[0]);
   const [showPassword, setShowPassword] = useState(false);
+  const [fullName, setFullName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
+
+  const E164_PATTERN = /^\+[1-9]\d{6,14}$/;
+
+  const handleSignup = async () => {
+    setError(null);
+
+    if (!E164_PATTERN.test(phone.trim())) {
+      setError('Enter a valid phone number in international format, e.g. +923001234567.');
+      return;
+    }
+
+    setSubmitting(true);
+    try {
+      await signUpWithPassword(email, password);
+      await apiFetch('/auth/me', {
+        method: 'PATCH',
+        body: {
+          full_name: fullName || undefined,
+          phone_number: phone.trim(),
+        },
+      });
+      router.push('/home');
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to create account.');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  const handleGoogle = async () => {
+    setError(null);
+    try {
+      await signInWithGoogle();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Failed to sign up with Google.');
+    }
+  };
 
   return (
     <AuthLayout
@@ -99,6 +145,9 @@ export default function SignupPage() {
           type="text"
           placeholder="Abdullah Khan"
           autoComplete="name"
+          required
+          value={fullName}
+          onChange={(e) => setFullName(e.target.value)}
         />
 
         <AuthInput
@@ -107,14 +156,20 @@ export default function SignupPage() {
           type="email"
           placeholder="you@example.com"
           autoComplete="email"
+          required
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
         />
 
         <AuthInput
           id="signup-phone"
           label="Phone Number"
           type="tel"
-          placeholder="+92 300 0000000"
+          placeholder="+923001234567"
           autoComplete="tel"
+          required
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
         />
 
         <AuthInput
@@ -123,6 +178,8 @@ export default function SignupPage() {
           type={showPassword ? 'text' : 'password'}
           placeholder="••••••••"
           autoComplete="new-password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
           rightSlot={
             <button
               type="button"
@@ -136,19 +193,26 @@ export default function SignupPage() {
           }
         />
 
+        {error && (
+          <p className="text-[13px] mb-3" style={{ color: '#f28b6b', fontFamily: 'var(--font-inter)' }}>
+            {error}
+          </p>
+        )}
+
         {/* Primary CTA */}
         <button
           id="signup-submit"
           type="button"
-          onClick={() => router.push('/home')}
-          className="w-full rounded-full py-3 text-[15px] font-bold mt-2 transition-all duration-150 hover:brightness-105 active:scale-[0.98]"
+          disabled={submitting}
+          onClick={handleSignup}
+          className="w-full rounded-full py-3 text-[15px] font-bold mt-2 transition-all duration-150 hover:brightness-105 active:scale-[0.98] disabled:opacity-60"
           style={{
             background: '#f2a93b',
             color: '#1a1a1a',
             fontFamily: 'var(--font-poppins), sans-serif',
           }}
         >
-          Create account
+          {submitting ? 'Creating account…' : 'Create account'}
         </button>
 
         <OrDivider />
@@ -157,7 +221,7 @@ export default function SignupPage() {
         <button
           id="signup-google"
           type="button"
-          onClick={() => router.push('/home')}
+          onClick={handleGoogle}
           className="w-full rounded-full py-3 text-[14px] font-medium flex items-center justify-center gap-3 transition-all duration-150 hover:bg-white/10 active:scale-[0.98]"
           style={{
             background: 'transparent',
